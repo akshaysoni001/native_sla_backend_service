@@ -162,9 +162,9 @@ class SlaPendingRequests(db.Model):
     dynamic_information = db.Column(JSON)
     justification = db.Column(db.String(400))
     remark = db.Column(db.String(64))
-    status = db.Column(db.String(2), default='P')
+    status = db.Column(db.String(10), default='Pending')
 
-    def __init__(self, account, user_id, activity, info, justification, remark=' ', status='P'):
+    def __init__(self, account, user_id, activity, info, justification, remark=' ', status='Pending'):
         self.account = account
         self.user_id = user_id
         self.activity = activity

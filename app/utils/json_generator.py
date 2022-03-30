@@ -6,9 +6,10 @@ from flask_login import current_user
 
 
 class JsonGenerator(Resource):
-    def __init__(self, form_data, user=None):
+    def __init__(self, form_data, user=None, account=None):
         self.data = form_data
         self.user = user
+        self.account = account
         self.request_type = None
         self.json_dict = None
         self.message = None
@@ -16,22 +17,22 @@ class JsonGenerator(Resource):
 
     def delete_sla(self):
         self.json_dict = {
-            'user_id': self.user.user_id,
+            'user_id': self.user,
             'application': self.data["application"],
-            'account': self.user.account,
+            'account': self.account,
             'sla_number': self.data["sla_number"],
             'sla_description': self.data["sla_description"],
             'sla_type': self.data["sla_type"],
-            'justification': self.data["justification"]
+            'justification': self.data["remark"]
 
         }
         self.request_type = "delete_sla"
 
     def update_sla(self):
         self.json_dict = {
-            'user_id': self.user.user_id,
+            'user_id': self.user,
             'application': self.data["application"],
-            'account': self.user.account,
+            'account': self.account,
             'sla_number': self.data["sla_number"],
             'sla_description': self.data["sla_description"],
             'frequency': self.data["frequency"],
@@ -45,7 +46,7 @@ class JsonGenerator(Resource):
             'sla_cal_condition': self.data["sla_cal_condition"],
             'indicator': self.data["indicator"],
             'status': self.data["status"],
-            'justification': self.data["justification"]
+            'justification': self.data["remark"]
         }
         if self.data["request"] == "add":
             self.request_type = "add_sla"
@@ -58,7 +59,7 @@ class JsonGenerator(Resource):
             "name": self.data["name"],
             "user_id": self.data["username"],
             "email_id": self.data["email"],
-            "justification": self.data["justification"]
+            "justification": self.data["remark"]
         }
         self.request_type = "registration"
 
@@ -66,7 +67,7 @@ class JsonGenerator(Resource):
         self.json_dict = {
             "request_for": self.data["service"],
             "service": self.data.get("account", "rights"),
-            "justification": self.data["justification"],
+            "justification": self.data["remark"],
             "check": self.data["check"]
         }
         if self.json_dict["request_for"] == "add_account":
@@ -90,9 +91,6 @@ class JsonGenerator(Resource):
         self.redirect = True
 
     def generate_json(self):
-        print(self.request_type)
-        if current_user.is_authenticated:
-            self.user = session["user"]
         if self.data["request"] == "delete":
             self.delete_sla()
         elif self.data["request"] == "update" or self.data["request"] == "add":

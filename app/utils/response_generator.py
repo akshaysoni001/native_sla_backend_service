@@ -1,36 +1,30 @@
-from flask import make_response, render_template, flash, Response
+from flask import make_response, jsonify
+from flask_api import status
 
 
-class ResponseGenerator(Response):
-    def __init__(self, html, message=None, config_details="", user_details="", user_accounts="",
-                 requested_service='', sla_number_with_description='', sla_config_details_with_values='',
-                 reset_ind=''):
-        self.html = html
+class ResponseGenerator:
+    def __init__(self, message="", status_code=None, errors=None, data=None, type=None):
         self.message = message
-        self.config_details = config_details
-        self.user_details = user_details
-        self.user_accounts = user_accounts
-        self.requested_service = requested_service
-        self.sla_number_with_description = sla_number_with_description
-        self.sla_config_details_with_values = sla_config_details_with_values
-        self.reset_ind = reset_ind
+        self.status = status_code
+        self.errors = errors if errors else {}
+        self.type = type if type else ""
+        self.data = data if data else []
 
     def make_success_response(self):
-        if self.message:
-            flash(self.message, "message")
-        return make_response(render_template(self.html, config_details=self.config_details,
-                                             user_details=self.user_details, user_accounts=self.user_accounts,
-                                             requested_service=self.requested_service,
-                                             sla_number_with_description=self.sla_number_with_description,
-                                             sla_config_details_with_values=self.sla_config_details_with_values,
-                                             reset_ind=self.reset_ind))
+        resp_data = dict()
+        resp_data["message"] = self.message
+        resp_data["data"] = self.data
+        resp_data["success"] = True
+        resp = make_response(jsonify(resp_data), self.status or status.HTTP_200_OK)
+        resp.mimetype = "application/json"
+        return resp
 
     def make_error_response(self):
-        if self.message:
-            flash(self.message, "error")
-        return make_response(render_template(self.html, config_details=self.config_details,
-                                             user_details=self.user_details, user_accounts=self.user_accounts,
-                                             requested_service=self.requested_service,
-                                             sla_number_with_description=self.sla_number_with_description,
-                                             sla_config_details_with_values=self.sla_config_details_with_values,
-                                             reset_ind=self.reset_ind))
+        resp_data = dict()
+        resp_data["message"] = self.message
+        resp_data["type"] = self.type
+        resp_data["errors"] = self.errors
+        resp_data["success"] = False
+        resp = make_response(jsonify(resp_data), self.status or status.HTTP_400_BAD_REQUEST)
+        resp.mimetype="application/json"
+        return resp

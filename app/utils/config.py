@@ -43,16 +43,14 @@ class GetSlaDetails:
         self.sla_number = sla_number
 
     def _get_sla_details(self):
-
-        user = session["user"]
         if self.from_date and self.to_date and self.sla_number:
-            sla_details = db.session.query(SlaConfigDetails).filter_by(status=0, account=user.account,
+            sla_details = db.session.query(SlaConfigDetails).filter_by(status=0, account=self.account,
                                                                        sla_number=self.sla_number).filter(
                 and_(SlaConfigDetails.sys_creation_date <= parse(self.to_date), SlaConfigDetails.sys_creation_date
                      >= parse(self.from_date)), deleted=False).all()
         else:
             sla_details = db.session.query(SlaConfigDetails).filter_by(status=0,
-                                                                       account=user.account, deleted=False).all()
+                                                                       account=self.account, deleted=False).all()
         return sla_details
 
     def get_sla_details(self):

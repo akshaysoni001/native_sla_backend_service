@@ -23,14 +23,10 @@ class RequestRaised:
         mail.send_mail()
 
     def _get_mailing_details(self):
-        if current_user.is_authenticated:
-            mail_user = db.session.query(SlaUserManagement.user_name, SlaUserManagement.email_id).\
+        mail_user = db.session.query(SlaUserManagement.user_name, SlaUserManagement.email_id).\
                 filter_by(user_id=self.user_id, deleted=False).first()
-            self.username = mail_user.user_name
-            self.user_email = mail_user.email_id
-        else:
-            self.username = self.new_data["user_id"]
-            self.user_email = self.new_data["email_id"]
+        self.username = mail_user.user_name
+        self.user_email = mail_user.email_id
 
         obj = db.session.query(SlaUserManagement.email_id, SlaUserManagement.user_name) \
             .outerjoin(SlaUserRole, SlaUserManagement.user_id == SlaUserRole.user_id) \

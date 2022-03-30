@@ -165,14 +165,40 @@
 #
 # print(role.role)
 
+# from app import db
+# query = f"""select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
+# justification, status from sla_pending_approval where user_id='admin'
+# and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
+# dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+#  and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
+#  role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
+#  order by sys_creation_date desc
+# """
+# all_request = db.session.execute(query).all()
+# print(all_request)
+from app.models.models import SlaConfigDetails
 from app import db
-query = f"""select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
-justification, status from sla_pending_approval where user_id='admin'
-and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
-dynamic_information, justification, status from sla_pending_approval c where c.status='p'
- and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
- role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
- order by sys_creation_date desc
-"""
-all_request = db.session.execute(query).all()
-print(all_request)
+#
+# sla_details = db.session.query(SlaConfigDetails).filter_by(status=0,
+#                                                                        account='vil', deleted=False).all()
+# print(sla_details)
+# for sla in sla_details:
+#     print(sla.id)
+
+# query = f"""select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
+#             justification, status from sla_pending_approval where user_id='admin'
+#             and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
+#             dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+#              and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
+#              role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
+#              order by sys_creation_date desc
+#             """
+#
+# all_request = db.session.execute(query).all()
+# print(all_request)
+
+slas = db.session.query(SlaConfigDetails.sla_number, SlaConfigDetails.sla_description).\
+            filter_by(account='vil', status=0).all()
+
+for sla in slas:
+    print(sla[1])

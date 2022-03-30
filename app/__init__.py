@@ -9,6 +9,7 @@ from flask_restful import Api
 from config import config
 from flask_session import Session
 from flask_mail import Mail
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 
 _author_ = "Akshay Soni"
@@ -20,6 +21,8 @@ app.logger.setLevel(logging.INFO)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "ThisIsMySceretKeys" #"b'\xb1)\xff\x96w\xf4\xa9\x1b\x12\xcd\xe7w\xe8\xe4\xb2\x08\xf9\xda\xce\xdc\xe4\xc2P\x82'"
 app.config['SESSION_TYPE'] = 'filesystem'
+cors = CORS(app, resource={r"/*": {"origin": "*"}})
+
 api = Api(app)
 db = SQLAlchemy(app)
 mail = Mail(app)
