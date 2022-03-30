@@ -1,0 +1,201 @@
+{% extends "Vil_Sla_Menupage.html" %}
+{% block body %}
+
+{% include 'Alerts.html' %}
+{% block body1 %}
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Contact Us</title>
+	<style type="text/css">
+		body {
+			color: #404E67;
+			background-image: url("static/img/home.jpg");
+			background-size: cover;
+			font-family: 'Open Sans', sans-serif;
+			padding: 0px;
+			padding-top: 41px;
+			margin: 0px;
+		}
+
+		.form-control {
+			border-color: #d7d7d7;
+			box-shadow: none;
+			font-size: 15px;
+		}
+
+		.form-control:focus,
+		.btn:focus {
+			border-color: #a177ff;
+			box-shadow: 0 0 8px #c2a8ff;
+		}
+
+		.contact-form {
+			margin: 40px;
+			border-radius: 6px;
+			background: #fff;
+
+		}
+
+		.contact-form form {
+			margin-right: 20px;
+			background: #fff;
+			padding: 40px;
+			width: auto;
+			border-radius: 6px;
+		}
+
+		.contact-form h1 {
+			text-align: center;
+			font-size: 50px;
+			margin: 0 0 15px;
+		}
+
+		.contact-form .form-group {
+			margin-bottom: 20px;
+		}
+
+		.contact-form .form-control,
+		.contact-form .btn {
+			border-radius: 2px;
+			min-height: 40px;
+			transition: all 0.5s;
+			outline: none;
+		}
+
+		.contact-form .btn {
+			background: #261C2C;
+			font-size: 16px;
+			min-height: 50px;
+			border: none;
+		}
+
+		.contact-form .btn:hover,
+		.contact-form .btn:focus {
+			background: #261C2C;
+			outline: none;
+		}
+
+		.contact-form .btn i {
+			margin-right: 5px;
+		}
+
+		.contact-form label {
+			color: #bbb;
+			font-weight: normal;
+		}
+
+		.contact-form textarea {
+			resize: vertical;
+		}
+
+		.title {
+			border-bottom: 1px solid #e9e9e9;
+			padding-bottom: 15px;
+			width: auto;
+			margin-left: 15px;
+			margin-right: 15px;
+			background: #6F4C5B;
+			padding: 10px 30px;
+			color: #fff;
+		}
+
+		.title h2 {
+			margin: 4px 0 0;
+			font-size: 24px;
+			text-align: center;
+			color: whitesmoke;
+		}
+
+		.hint-text {
+			font-size: 15px;
+			margin-top: 5px;
+			text-align: center;
+			color: white;
+			opacity: 0.8;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="contact-form card card0 border-0">
+		<div class="row d-flex">
+			<div class="title">
+				<h2>Get In Touch</h2>
+
+			</div>
+
+			<div class="col-lg-5">
+
+				<div class="card1 pb-5">
+					<div class="border-line">
+					<img src="static/img/home.jpg" width="100%" height="400px" style="" class="image">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-7 border-0">
+				<div class="row card2 card border-0 px-4 py-5">
+					<form action="/contact" method="post">
+						<div class="form-group">
+							<label for="inputName">Name</label>
+							<input type="text" class="form-control" name="name" placeholder="Enter your name"
+								autocomplete="off" id="inputName" required>
+						</div>
+						<div class="form-group">
+							<label for="inputNumber">Mobile Number</label>
+							<input class="form-control" type="text" name="mobilenumber" placeholder="Enter numbers"
+								title="Invalid Number : 10 Digit Valid Number is acceptable, Should not be stated with 0"
+								pattern="[1-9]{1}[0-9]{9}" maxlength="10" autocomplete="off" id="inputNumber" required>
+						</div>
+						<div class="form-group">
+							<label>Services</label>
+							<select class="form-control" name="service" required>
+								<option value="" selected disabled>Please choose</option>
+								<option>Observation/Feeedbak</option>
+								<option>Suggestion/Improvement</option>
+								<option>Other</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="inputMessage">Message</label>
+							<textarea class="form-control" name="message" placeholder="Your message here..."
+								id="inputMessage" rows="5" required></textarea>
+						</div>
+						<button type="submit" class="btn btn-primary btn-block"><i class="fa fa-paper-plane"></i>
+							Submit</button>
+					</form>
+					<br>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+<script>
+    var btn = document.getElementById('myBtn');
+    var errbtn = document.getElementById("errBtn");
+<!--		Message Modal Pop Up-->
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+			{% if messages %}
+				{%- for message in messages %}
+					btn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+<!--		Error Modal Pop Up-->
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% if errors %}
+				{%- for error in errors %}
+					errbtn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+	</script>
+</body>
+{% endblock %}
+{% endblock %}

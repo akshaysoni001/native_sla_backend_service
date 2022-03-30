@@ -1,0 +1,815 @@
+{% extends "Vil_Sla_Menupage.html" %}
+{% block body %}
+{% include 'Alerts.html' %}
+{% block body1 %}
+<html lang="en">
+    <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista - SLA Monitoring Tool</title>
+        <!--	Css-->
+	        <link href="static/css/datatables.min.css" rel="stylesheet">
+
+
+<!-- <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
+<link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+    body {
+        color: #566787;
+		font-family: 'Roboto', sans-serif;
+		margin-top:20px;
+		padding: 0px;
+  		padding-top:41px;
+  		background-image: url("static/img/H11.png");
+    	background-size:cover;
+
+	}
+	.table-wrapper {
+        width: auto;
+        background: #fff;
+        padding: 20px 30px 5px;
+        margin: 20px;
+        box-shadow: 0 0 1px 0 rgba(0,0,0,.25);
+    }
+	.table-title .btn-group {
+		float: right;
+	}
+	.table-title .btn {
+		min-width: 50px;
+		border-radius: 2px;
+		border: none;
+		padding: 6px 12px;
+		font-size: 95%;
+		outline: none !important;
+		height: 30px;
+	}
+    .table-title {
+		border-bottom: 1px solid #e9e9e9;
+		padding-bottom: 15px;
+		margin-bottom: 5px;
+		background: #6F4C5B;
+		margin: -20px -31px 10px;
+		padding: 15px 30px;
+		color: #fff;
+    }
+    .table-title h2 {
+		margin: 2px 0 0;
+		color:whitesmoke;
+		font-size: 24px;
+	}
+    table.table tr th, table.table tr td {
+        border-color: #e9e9e9;
+		padding: 12px 15px;
+		vertical-align: middle;
+    }
+	table.table tr th:first-child {
+		width: 40px;
+	}
+	table.table tr th:last-child {
+		width: 100px;
+	}
+    table.table-striped tbody tr:nth-of-type(odd) {
+    	background-color: #fcfcfc;
+	}
+	table.table-striped.table-hover tbody tr:hover {
+		background: #f5f5f5;
+	}
+    table.table td a {
+        color: #2196f3;
+    }
+	table.table td .btn.manage {
+		padding: 2px 10px;
+		background: #37BC9B;
+		color: #fff;
+		border-radius: 2px;
+	}
+	table.table td .btn.manage:hover {
+		background: #2e9c81;
+	}
+	table.table td success {
+		padding: 2px 10px;
+		background: rgb(100, 230, 106);
+		color: #fff;
+		border-radius: 2px;
+	}
+	table.table td success:hover {
+		background: rgb(100, 230, 106);
+	}
+	table.table td danger {
+		padding: 2px 10px;
+		background: rgb(192, 42, 50);
+		color: #fff;
+		border-radius: 2px;
+	}
+	table.table td danger:hover {
+		background: rgb(192, 42, 50);
+	}
+
+:-ms-input-placeholder {
+    color: #BDBDBD;
+    font-weight: 300
+}
+
+::-ms-input-placeholder {
+    color: #BDBDBD;
+    font-weight: 300
+}
+
+input,
+textarea {
+    padding: 10px 12px 10px 12px;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    margin-bottom: 5px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #2C3E50;
+    letter-spacing: 1px
+}
+
+input:focus,
+textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #304FFE;
+    outline-width: 0
+}
+
+:-ms-select-placeholder {
+    color: #BDBDBD;
+    font-weight: 300
+}
+
+::-ms-select-placeholder {
+    color: #BDBDBD;
+    font-weight: 300
+}
+
+select,
+textarea {
+    padding: 10px 12px 10px 12px;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    margin-bottom: 5px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #2C3E50;
+    letter-spacing: 1px
+}
+
+select:focus,
+textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #304FFE;
+    outline-width: 0
+}
+
+.modal-dialog{
+            z-index:990;
+            }
+
+.modal-header2{
+		border-bottom: 1px solid #e9e9e9;
+		padding-bottom: 15px;
+		margin-bottom: 5px;
+		background: #6F4C5B;
+		margin: 0px 15px 10px;
+		padding: 15px 30px;
+		color: #fff;
+		height:70px;
+    }
+    .hint-text {
+        font-size: 18px;
+		margin-top: 5px;
+		text-align: center;
+		color: whitesmoke;
+        /* padding-bottom: 25px;
+        opacity: 0.8; */
+    }
+    .btn{
+  border-radius:40px;
+  color:whitesmoke;
+  letter-spacing:1px;
+}
+
+.btn:hover {
+  background-color: rgb(59, 172, 192);
+  color: white;
+}
+.btn:focus {
+  background-color: rgb(59, 172, 192);
+  color: white;
+
+}
+td.details-control {
+    background: url('http://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('http://www.datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+.dataTables_scroll
+{
+    overflow:auto;
+}
+</style>
+    </head>
+        <script type="text/javascript">
+
+$(document).ready(function() {
+    var table = $('#example').DataTable( {
+
+        scrollX: '50vh',
+        scrollY:        '52vh',
+        scrollCollapse: true,
+        paging:         true,
+        searching:true,
+        order:[[1,'asc']]
+    }
+    );
+    var table = $('#example1').DataTable( {
+        scrollX: '50vh',
+        scrollY:        '52vh',
+        scrollCollapse: true,
+        paging:         true,
+        searching:true,
+        order:[[1,'asc']]
+
+    } );
+    var table = $('#example2').DataTable( {
+        scrollX: '50vh',
+        scrollY:        '52vh',
+        scrollCollapse: true,
+        paging:         true,
+        searching:true,
+        order:[[1,'asc']]
+    }
+    );
+
+} );
+</script>
+    <body>
+        <div class="table-wrapper">
+            <div class="table-title">
+            <div class="row">
+                <div class="col-sm-4"><h2>SLA Configuration <b>Console</b></h2></div>
+                <div class="col-sm-2"><button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#register_manager"><i class="fa fa-plus"></i> Register Manager</button></div>
+                <div class="col-sm-2"><button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#add_configuration"><i class="fa fa-plus"></i>Add Configuration</button></div>
+                <div class="col-sm-4">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary active tablinks"  id="defaultOpen" onclick="openConfig(event, 'User_Managment')"><input name="status" type="radio">SLA USER MANAGEMENT</label>
+<!--                        <label class="btn btn-success tablinks" onclick="openConfig(event, 'Rma_Kpi')"><input name="status" type="radio">SLA RMA KPI CONFIG</label>-->
+                        <label class="btn btn-warning tablinks" onclick="openConfig(event, 'Config_Param')"><input name="status" type="radio">SLA CONFIG PARAM</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div id="Config_Param" class="tabcontent">
+              <span onclick="this.parentElement.style.display='none'" class="topright"></span>
+                <table id="example2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th>ACTIVITY_ID</th>
+                        <th>PARAM_TYPE</th>
+                        <th>PARAM_ACCOUNT</th>
+                        <th>PARAM_NAME</th>
+                        <th>PARAM_VALUE</th>
+                        <th>ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for row in sla_config_data %}
+                        <tr>
+                            <td>{{row.0}}</td>
+                            <td>{{row.1}}</td>
+                            <td>{{row.2}}</td>
+                            <td>{{row.3}}</td>
+                            <td>{{row.4}}</td>
+
+                            <td>
+                                <a href="" class="success" title="Edit" data-target="#modaledit{{row.0}}" data-toggle="modal"><i class="material-icons" style="color:rgb(235, 189, 38)">&#xE254;</i></a>
+                                <a href="" class="danger" title="Delete" data-toggle="modal" data-target="#modaleditdel{{row.0}}"><i class="material-icons" style="color:rgb(214, 54, 54)">&#xE872;</i></a>
+                            </td>
+                    </tr>
+                      <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+             <div class="modal-dialog">
+                <div class="modal-content">
+                   <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Update SLA Configuration</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                            </div>
+                   <div class="modal-body">
+                      <form action="/config_update_console" method="POST">
+                          <div class="form-group">
+                            <label>ACTIVITY_ID:</label>
+                            <input type="text" class="form-control" name="activity_id" readonly="readonly" value="{{row.0}}">
+                         </div>
+                          <div class="form-group">
+                            <label>PARAM_TYPE:</label>
+                            <input type="hidden" name="activity_type" value="UPDATE_CONFIGURATION">
+                            <input type="text" class="form-control" name="param_type" readonly="readonly" value="{{row.1}}">
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_ACCOUNT:</label>
+                            <input type="text" class="form-control" name="param_account" readonly="readonly" value="{{row.2}}">
+                         </div>
+                          <div class="form-group">
+                            <label>PARAM_NAME:</label>
+                            <input type="text" class="form-control" name="param_name" readonly="readonly" value="{{row.3}}">
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_VALUE:</label>
+                            <input type="text" class="form-control" name="param_value" value="{{row.4}}">
+                         </div>
+                         <div class="form-group">
+                            <label>JUSTIFICATION:</label>
+                            <input type="text" class="form-control" name="justification" value="{{row['JUSTIFICATION']}}" required>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info" onclick="return EditValidation()">Confirm Update</button>
+                        </div>
+
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+                      <div id="modaleditdel{{row.0}}" class="modal fade" role="dialog">
+             <div class="modal-dialog">
+                <div class="modal-content">
+                   <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Delete Configuration</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                    </div>
+                   <div class="modal-body">
+                      <form action="/config_delete_console" method="POST">
+                          <div class="form-group">
+                            <label>ACTIVITY_ID:</label>
+                            <input type="text" class="form-control" name="activity_id" readonly="readonly" value="{{row.0}}">
+                         </div>
+                          <div class="form-group">
+                            <label>PARAM_TYPE:</label>
+                            <input type="hidden" name="activity_type" value="DELETE_CONFIGURATION">
+                            <input type="text" class="form-control" name="param_type" readonly="readonly" value="{{row.1}}">
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_ACCOUNT:</label>
+                            <input type="text" class="form-control" name="param_account" readonly="readonly" value="{{row.2}}">
+                         </div>
+                          <div class="form-group">
+                            <label>PARAM_NAME:</label>
+                            <input type="text" class="form-control" name="param_name" readonly="readonly" value="{{row.3}}">
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_VALUE:</label>
+                            <input type="text" class="form-control" name="param_value" readonly="readonly" value="{{row.4}}">
+                         </div>
+                         <div class="form-group">
+                            <label>JUSTIFICATION:</label>
+                            <input type="text" class="form-control" name="justification" required>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info">Confirm Delete</button>
+                        </div>
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+                      {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="User_Managment" class="tabcontent">
+                <span onclick="this.parentElement.style.display='none'" class="topright"></span>
+            <table id="example" class="table table-striped table-bordered" cellspacing="0"
+            width="100%">
+        <thead>
+                    <tr>
+                      <th>OID</th>
+                      <th>USER_NAME</th>
+                      <th>USER_ID</th>
+                      <th>EMAIL_ID</th>
+                      <th>STATUS</th>
+                      <th>ATTEMPT</th>
+                      <th>RESET_IND</th>
+                      <th>ACTION</th>
+                    </tr>
+                  </thead>
+        <tbody>
+                    {% for row in user_config_data %}
+                      <tr>
+                        <td>{{row.0}}</td>
+                        <td>{{row.1}}</td>
+                        <td>{{row.2}}</td>
+                        <td>{{row.3}}</td>
+                        <td>{{row.4}}</td>
+                        <td>{{row.5}}</td>
+                        <td>{{row.6}}</td>
+<!--                        <td>-->
+<!--                            <a class="success" data-target="#modaledit{{row.0}}" data-toggle="modal"-->
+<!--                              href="/config_update_console/{{row.0}}" title="Edit"><i class="material-icons"-->
+<!--                                                                                      style="color:rgb(235, 189, 38)">&#xE254;</i></a>-->
+<!--                        </td>-->
+                          <td>
+                    <a href="" class="success" title="Edit" data-target="#modaledit{{row.0}}" data-toggle="modal"><i class="material-icons" style="color:rgb(235, 189, 38)">&#xE254;</i></a>
+                    <a href="" class="danger" title="Delete" data-toggle="modal" data-target="#modaleditdel{{row.0}}"><i class="material-icons" style="color:rgb(214, 54, 54)">&#xE872;</i></a>
+                 </td>
+                      </tr>
+                        <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+             <div class="modal-dialog">
+                <div class="modal-content">
+                   <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Update User Information</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                            </div>
+                   <div class="modal-body">
+                      <form action="/config_update_console" method="POST">
+                          <div class="form-group">
+                            <label>OID:</label>
+                            <input type="text" class="form-control" name="oid" readonly="readonly" value="{{row.0}}">
+                         </div>
+                         <div class="form-group">
+                            <label>USER_NAME:</label>
+                            <input type="hidden" name="activity_type" value="UPDATE_USER">
+                            <input type="text" class="form-control" name="user_name" readonly="readonly" value="{{row.1}}">
+                         </div>
+                         <div class="form-group">
+                            <label>USER_ID:</label>
+                            <input type="text" class="form-control" name="user_id" readonly="readonly" value="{{row.2}}" required>
+                         </div>
+                         <div class="form-group">
+                            <label>EMAIL_ID:</label>
+                            <input type="text" class="form-control" name="email_id" value="{{row.3}}" readonly="readonly" placeholder="Should be end with @abc.com" required>
+                         </div>
+                         <div class="form-group">
+                            <label for="status">STATUS:</label>
+                              <select id="status" name="status" value="{{row.4}}" required>
+                                 <option class="form-control" value="" selected disabled>{{row.4}}</option>
+                                 <option class="form-control" value="0">0</option>
+                                 <option class="form-control" value="1">1</option>
+                              </select>
+                         </div>
+                         <div class="form-group">
+                            <label>JUSTIFICATION:</label>
+                            <input type="text" class="form-control" name="justification" required>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info" onclick="return EditValidation()">Confirm Update</button>
+                        </div>
+
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+                        <div id="modaleditdel{{row.0}}" class="modal fade" role="dialog">
+             <div class="modal-dialog">
+                <div class="modal-content">
+                   <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Delete User</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                    </div>
+                   <div class="modal-body">
+                      <form action="/config_delete_console" method="POST">
+                          <div class="form-group">
+                            <label>OID:</label>
+                            <input type="text" class="form-control" name="oid" readonly="readonly" value="{{row.0}}">
+                         </div>
+                          <div class="form-group">
+                            <label>USER_NAME:</label>
+                            <input type="hidden" name="activity_type" value="DELETE_USER">
+                            <input type="text" class="form-control" name="user_name" readonly="readonly" value="{{row.1}}">
+                         </div>
+                         <div class="form-group">
+                            <label>USER_ID:</label>
+                            <input type="text" class="form-control" name="user_id" readonly="readonly" value="{{row.2}}">
+                         </div>
+                          <div class="form-group">
+                            <label>STATUS:</label>
+                            <input type="text" class="form-control" name="status" readonly="readonly" value="{{row.4}}">
+                         </div>
+                         <div class="form-group">
+                            <label>EMAIL_ID:</label>
+                            <input type="text" class="form-control" name="email_id" readonly="readonly" value="{{row.3}}">
+                         </div>
+                         <div class="form-group">
+                            <label>JUSTIFICATION:</label>
+                            <input type="text" class="form-control" name="justification" required>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info">Confirm Delete</button>
+                        </div>
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+                        {% endfor %}
+                  </tbody>
+
+
+            </table></div>
+            <div id="Rma_Kpi" class="tabcontent">
+              <span onclick="this.parentElement.style.display='none'" class="topright"></span>
+            <table id="example1" class="table table-striped table-bordered" cellspacing="0"
+  width="100%" >
+                <thead>
+                      <tr>
+                        <th>ACCOUNT</th>
+                        <th>ACTIVITY_ID</th>
+                        <th>SLA_TYPE</th>
+                        <th>FREQUENCY</th>
+                        <th>PROD_TABLE</th>
+                        <th>LOGIC</th>
+                        <th>STATUS</th>
+                        <th>ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for row in rma_data %}
+                        <tr>
+                            <td>{{row.0}}</td>
+                            <td>{{row.1}}</td>
+                            <td>{{row.2}}</td>
+                            <td>{{row.3}}</td>
+                            <td>{{row.4}}</td>
+                            <td>{{row.5}}</td>
+                            <td>{{row.6}}</td>
+                            <td>
+                                <a class="success" data-target="#modaledit{{row.0}}" data-toggle="modal"
+                                  href="/config_update_console/{{row.0}}" title="Edit"><i class="material-icons"
+                                                                                          style="color:rgb(235, 189, 38)">&#xE254;</i></a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+
+
+
+        </div>
+
+        </div>
+
+<form class="pb-m odalreglog-form-reg" action="/config_update_console" method="post">
+                    <div class="modal fade" id="register_manager" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Please provide details to Register Manager</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                            </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input value="{{supported_domains}}"  id='supported_domains' type='hidden'/>
+									<label>Account</label>
+                                    <select class="" name="account" required>
+											  <option value="{{request.form.account}}" name='account' selected disabled>Accounts</option>
+											  {% for i in config_details['ALL_ACCOUNT'] %}
+											  <option value="{{i}}">{{i}}</option>
+											  {% endfor %}
+										  </select>
+								</div>
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="hidden" name="activity_type" value="REGISTER_MANAGER">
+                                    <div class="input-group pb-modalreglog-input-group">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                        <input type="text" class="form-control" placeholder="Name" maxlength="100" autocomplete="off" name="name" required>
+                                    </div>
+                                </div>
+								<div class="form-group">
+                                    <label>NTNET ID</label>
+                                    <div class="input-group pb-modalreglog-input-group">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+                                        <input type="text" class="form-control" placeholder="NTNET ID" maxlength="10" autocomplete="off" name="username" required>
+                                    </div>
+                                </div>
+								<div class="form-group">
+                                    <label>Email Address</label>
+                                    <div class="input-group pb-modalreglog-input-group">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                        <input type="email" class="form-control" autocomplete="off" placeholder="Official E-Mail Address" id='email' name="email" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Justification</label>
+                                    <div class="input-group pb-modalreglog-input-group">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                                        <input type="text" class="form-control" autocomplete="off" placeholder="Why You need to register?" id="justification" name='justification' required>
+                                    </div>
+                                </div>
+
+                     </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info"  onclick=" return Validate()">Confirm Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </form>
+<form class="pb-m odalreglog-form-reg" action="/config_update_console" method="post">
+                    <div class="modal fade" id="add_configuration" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="row">
+                        <div class="modal-header2 text-center">
+                            <div class="col-sm-10">
+							<p class="hint-text">Please provide details to Add Configuration</p>
+                            </div>
+                            <div class="col-sm-2">
+                            <label class="btn btn-danger">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                                    <span aria-hidden="true">&times;</span>
+                            </label>
+                            </div>
+
+                        </div>
+                            </div>
+                        <div class="modal-body">
+                          <div class="form-group">
+                            <label>PARAM_TYPE:</label>
+                            <input type="hidden" name="activity_type" value="ADD_CONFIGURATION">
+                            <input type="text" class="form-control" name="param_type"  required>
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_ACCOUNT:</label>
+                            <input type="text" class="form-control" name="param_account"  required>
+                         </div>
+                          <div class="form-group">
+                            <label>PARAM_NAME:</label>
+                            <input type="text" class="form-control" name="param_name"  required>
+                         </div>
+                         <div class="form-group">
+                            <label>PARAM_VALUE:</label>
+                            <input type="text" class="form-control" name="param_value"  required>
+                         </div>
+                         <div class="form-group">
+                            <label>JUSTIFICATION:</label>
+                            <input type="text" class="form-control" name="justification" required>
+                         </div>
+
+                     </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info" >Confirm Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </form>
+</body>
+
+
+  <!-- <script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" type="text/javascript"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js" type="text/javascript"></script> -->
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.colVis.min.js" type="text/javascript"></script>
+    <!--	js-->
+            <script src="static/js/datatables.min.js"></script>
+
+     <script>
+  function openConfig(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  // Get the element with id="defaultOpen" and click on it
+  document.getElementById("defaultOpen").click();
+  </script>
+    <script type="text/javascript">
+  function Validate() {
+		var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		var email = document.getElementById("email").value.toLowerCase();
+		var supported_domains = document.getElementById("supported_domains").value;
+		console.log(supported_domains);
+
+		if (email.match(mailformat))
+		{
+<!--            validEmails = ['abc.com'] &lt;!&ndash;You can add more with comma separated if required&ndash;&gt;-->
+			var val = email.split('@').pop();
+			if (supported_domains.includes(val))
+			{
+			    return true
+			}
+			else{
+				alert("Please enter your official Email.");
+				return false
+			}
+
+		}
+		else
+		{
+			alert("You have entered an invalid email address!");
+			return false
+		}
+	}
+
+
+</script>
+<script>
+    var btn = document.getElementById('myBtn');
+    var errbtn = document.getElementById("errBtn");
+<!--		Message Modal Pop Up-->
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+			{% if messages %}
+				{%- for message in messages %}
+					btn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+<!--		Error Modal Pop Up-->
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% if errors %}
+				{%- for error in errors %}
+					errbtn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+	</script>
+{% endblock %}
+{% endblock %}
+</html>

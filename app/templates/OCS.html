@@ -1,0 +1,719 @@
+{% extends "Vil_Sla_Menupage.html" %}
+{% block body %}
+
+
+{% include 'Alerts.html' %}
+{% block body1 %}
+<html lang="en">
+    <head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Request Console</title>
+<!--	Css-->
+	        <link href="static/css/datatables.min.css" rel="stylesheet">
+        <!--	js-->
+	        <script src="static/js/datatables.min.js"></script>
+  
+  <style type="text/css">
+
+    body {
+      color: #566787;
+      background: #f5f5f5;
+      font-family: 'Roboto', sans-serif;
+      margin-top: 20px;
+      width: auto;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      padding: 20px 5px 5px;
+      margin:50px;
+      margin-top: 80px;
+      box-shadow: 0 0 1px 0 rgba(0, 0, 0, .25);
+
+    }
+
+    .table-title .btn {
+      min-width: 50px;
+      border-radius: 2px;
+      border: none;
+      padding: 6px 12px;
+      outline: none !important;
+      height: 30px;
+    }
+
+    .table-title {
+      border-bottom: 1px solid #e9e9e9;
+      background: #6F4C5B;
+      margin: -20px -5px 10px;
+      padding: 10px 10px;
+      color: #fff;
+    }
+
+    .tabcontent {
+      overflow: scroll;
+      height: 80vh;
+      font-size: smaller;
+
+    }
+
+    .table-title h2 {
+      text-align: center;
+      margin: 5px 0 0;
+      font-size: 24px;
+    }
+
+    table.table tr th,
+    table.table tr td {
+      border-color: #e9e9e9;
+      padding: 12px 15px;
+      vertical-align: middle;
+    }
+
+    table.table tr th:first-child {
+      width: 40px;
+    }
+
+    table.table tr th:last-child {
+      width: 100px;
+    }
+
+    table.table-striped tbody tr:nth-of-type(odd) {
+      background-color: #fcfcfc;
+    }
+
+    table.table-striped.table-hover tbody tr:hover {
+      background: #f5f5f5;
+    }
+
+    table.table td a {
+      color: #2196f3;
+    }
+
+    table.table td .btn.success {
+      padding: 2px 10px;
+      background: rgb(100, 230, 106);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    table.table td .btn.success:hover {
+      background: rgb(100, 230, 106);
+    }
+
+    table.table td .btn.danger {
+      padding: 2px 10px;
+      background: rgb(192, 42, 50);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    table.table td .btn.danger:hover {
+      background: rgb(192, 42, 50);
+    }
+
+    .form-group {
+      text-align: center;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 3px;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      border-width: 2px;
+      border-style: solid;
+    }
+
+    .alert-error {
+      border-color: darkred;
+      background-color: red;
+      color: white;
+    }
+
+    .alert-info {
+      border-color: orange;
+      background-color: yellow;
+      color: black;
+    }
+
+    <!-- Table Scriolling-->
+    .dtHorizontalVerticalExampleWrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #example th,
+    td {
+      white-space: nowrap;
+    }
+
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+      bottom: .5em;
+    }
+
+    .modal-dialog {
+      z-index: 990;
+    }
+
+    h2{
+      color:whitesmoke;
+    }
+
+  </style>
+
+  <!-- <script type="text/javascript">
+    $(document).ready(function() {
+    $('#example').DataTable( {
+        scrollX: '50vh',
+        scrollY:        '52vh',
+        scrollCollapse: true,
+        paging:         true
+    } );
+} );
+
+  </script> -->
+
+<body>
+  <div class="table-wrapper">
+    <form action="/ocs_console" method="post">
+      <div class="table-title">
+        <h2><b>OCS</b> - A Complete Solution to Handle Incident</h2><br>
+        <div class="form-group">
+          <label for="ltype">ENTITY TYPE</label>
+          <select id="ltype" name="entity_type" style="color: black;">
+            <option value="" selected disabled>Please Select</option>
+            <option value="MSISDN">MSISDN</option>
+            <option value="SUBSCRIBER">SUBSCRIBER</option>
+            <option value="ACCOUNT">ACCOUNT</option>
+            <option value="BA">BA</option>
+            <option value="CUSTOMER">CUSTOMER</option>
+          </select>
+          <label>ENTITY ID</label><input type="number" name="entity_id" autocomplete="off" style="color: black;" required>
+          <button type="submit" class="btn btn-primary">SUBMIT</button>
+        </div>
+      </div>
+    </form>
+
+      <div id="User_Managment" class="tabcontent">
+        <span onclick="this.parentElement.style.display='none'" class="topright"></span>
+        <table cellspacing="0" class="table table-striped table-bordered" id="example" width="100%">
+
+          {% if SUB_STATUS | length > 1 %}
+          <input value="{{SUB_STATUS}}"  id='SUB_STATUS' type='hidden'/>
+          <div id='sub_headers'>
+            <tr><th colspan="12" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: SUBSCRIBER STATUS BASED ON SUBSCRIBER, CHARGE_DISTRIBUTE and CSM_PAY_CHANNEL</th></tr>
+              {% for row in SUB_STATUS %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="11" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: OFFER STATUS BASED ON SERVICE_AGREEMENT and CSM_OFFER</th></tr>  
+              {% for row in SERVICE_AGREEMENT %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                </tr>
+              {% endfor %}
+        
+            <tr><th colspan="14" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR1_ACCOUNT</th></tr>  
+              {% for row in AR1_ACCOUNT %}    
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="18" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR9_ACCOUNT_EXT</th></tr>
+              {% for row in AR9_ACCOUNT_EXT %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                  <td>{{row.15}}</td>
+                  <td>{{row.16}}</td>
+                  <td>{{row.17}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="10" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: PM9_ACCOUNT_BALANCE</th></tr>
+              {% for row in PM9_ACCOUNT_BALANCE %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="5" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: PM9_ACCOUNT_CRDTLIMIT</th></tr>
+              {% for row in PM9_ACCOUNT_CRDTLIMIT %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="12" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR1_INVOICE</th></tr>  
+              {% for row in AR1_INVOICE %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="11" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR1_CHARGE_GROUP</th></tr>
+              {% for row in AR1_CHARGE_GROUP %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="8" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR1_PAYMENT_DETAILS</th></tr>  
+              {% for row in AR1_PAYMENT_DETAILS %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="9" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: AR1_TRANSACTION_LOG</th></tr>  
+              {% for row in AR1_TRANSACTION_LOG %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="15" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL1_COLL_ENTITY</th></tr>  
+              {% for row in CL1_COLL_ENTITY %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="12" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL1_COLL_ENTITY_HISTORY</th></tr>  
+              {% for row in CL1_COLL_ENTITY_HISTORY %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="21" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: TABLE_BPM_STEP_INST</th></tr>  
+              {% for row in TABLE_BPM_STEP_INST %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                  <td>{{row.15}}</td>
+                  <td>{{row.16}}</td>
+                  <td>{{row.17}}</td>
+                  <td>{{row.18}}</td>
+                  <td>{{row.19}}</td>
+                  <td>{{row.20}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="8" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_PENDING_APPROVAL</th></tr>  
+              {% for row in CL9_PENDING_APPROVAL %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="17" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CSM_ACCOUNT</th></tr>  
+              {% for row in CSM_ACCOUNT %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                  <td>{{row.15}}</td>
+                  <td>{{row.16}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="15" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_CRD_MNTR_FA</th></tr>  
+              {% for row in CL9_CRD_MNTR_FA %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="13" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_CRD_MNTR_FA_HISTORY</th></tr>  
+              {% for row in CL9_CRD_MNTR_FA_HISTORY %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="11" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_RATER_INPUT</th></tr>  
+              {% for row in CL9_RATER_INPUT %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="6" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: PM9_ACCOUNT_ACCUMULATION</th></tr>  
+              {% for row in PM9_ACCOUNT_ACCUMULATION %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="22" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: PM9_UNBILLED_ACCUMULATION</th></tr>  
+              {% for row in PM9_UNBILLED_ACCUMULATION %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                  <td>{{row.12}}</td>
+                  <td>{{row.13}}</td>
+                  <td>{{row.14}}</td>
+                  <td>{{row.15}}</td>
+                  <td>{{row.16}}</td>
+                  <td>{{row.17}}</td>
+                  <td>{{row.18}}</td>
+                  <td>{{row.19}}</td>
+                  <td>{{row.20}}</td>
+                  <td>{{row.21}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="12" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_COMM_ACTIVITY</th></tr>  
+              {% for row in CL9_COMM_ACTIVITY %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                  <td>{{row.11}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="9" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_EXCLUDE_LIST</th></tr>  
+              {% for row in CL9_EXCLUDE_LIST %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="11" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CL9_DISPOSITION_RSP</th></tr>  
+              {% for row in CL9_DISPOSITION_RSP %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                  <td>{{row.9}}</td>
+                  <td>{{row.10}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="8" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: TRB1_SUB_LOG</th></tr>  
+              {% for row in TRB1_SUB_LOG %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="9" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: TRB1_SUB_ERRS</th></tr>
+              {% for row in TRB1_SUB_ERRS %}
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                </tr>
+              {% endfor %}
+
+            <tr><th colspan="9" style="background-color: rgb(0, 50, 74); color: cornsilk; font-size: initial;">TABLE NAME: CSM_FUTURE_REQUEST</th></tr>
+              {% for row in CSM_FUTURE_REQUEST %}  
+                <tr>
+                  <td>{{row.0}}</td>
+                  <td>{{row.1}}</td>
+                  <td>{{row.2}}</td>
+                  <td>{{row.3}}</td>
+                  <td>{{row.4}}</td>
+                  <td>{{row.5}}</td>
+                  <td>{{row.6}}</td>
+                  <td>{{row.7}}</td>
+                  <td>{{row.8}}</td>
+                </tr>
+              {% endfor %}
+              </div>
+        {% endif %}
+
+        </table>
+      </div>
+  </div>
+</body>
+<script>
+var SUB_STATUS= document.getElementById("SUB_STATUS").value;
+console.log(SUB_STATUS)
+console.log(SUB_STATUS[0].length)
+        if (SUB_STATUS.length < 2){
+        document.getElementById("sub_headers").style.visibility = "hidden";}
+    
+</script>
+<script>
+    var btn = document.getElementById('myBtn');
+    var errbtn = document.getElementById("errBtn");
+<!--		Message Modal Pop Up-->
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+			{% if messages %}
+				{% for message in messages %}
+					btn.click();
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+<!--		Error Modal Pop Up-->
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% if errors %}
+				{% for error in errors %}
+					errbtn.click();
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
+	</script>
+{% endblock %}
+{% endblock %}
+
+</html>

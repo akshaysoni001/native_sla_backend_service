@@ -1,0 +1,261 @@
+{% extends "Vil_Sla_Menupage.html" %}
+{% block body %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>About Us</title>
+  <meta content="" name="descriptison">
+  <meta content="" name="keywords">
+
+  <!-- CSS Files -->
+  <link href="static/css/owl.carousel.min.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="static/css/Aboutstyle.css" rel="stylesheet">
+<style>
+body{
+padding: 0px;
+  		padding-top:41px;
+  		margin: 0px;
+}
+  .icon-box{
+  height:300px;
+  }
+  </style>
+</head>
+
+<body>
+
+
+  <main id="main">
+
+
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about" style="background-color: white;">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-6">
+            <img src="static/img/about.png" class="img-fluid" width="550px" alt="">
+          </div>
+          <div class="col-lg-6 pt-4 pt-lg-0 content">
+            <h3>Our Mission</h3>
+            <p class="font-italic">
+              Provide Real time SLA Report, Due to this Accuracy of Product will increases and product will be more effective
+              Team is Working to Provide all the features which reduce the manual work
+            </p>
+            <h3>Features <i class="fa fa-vimeo"></i><b>1.0</b></h3>
+            <ul>
+              <li><i class="fa fa-check-square-o"></i> Single Repository to maintain SLAs</li>
+              <li><i class="fa fa-check-square-o"></i> SLAs availabe to download based on date</li>
+              <li><i class="fa fa-check-square-o"></i> Feedback/Suggestion Page</li>
+              <li><i class="fa fa-check-square-o"></i> Easy Accessible</li>
+            </ul>
+            <p>
+
+              <h3>Future Enhancement</h3>
+            <ul>
+              <li><i class="fa fa-bolt"></i> Single Repository to maintain SLAs</li>
+              <li><i class="fa fa-bolt"></i> SLAs availabe to download based on date</li>
+              <li><i class="fa fa-bolt"></i> Feedback/Suggestion Page</li>
+              <li><i class="fa fa-bolt"></i> Easy Accessible</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Section -->
+
+    <!-- ======= Counts Section ======= -->
+    <section id="counts" class="counts text-center" style="background-color: whitesmoke;">
+      <div class="container">
+
+        <div class="row counters"  style="margin-top:40px;">
+
+          <div class="col-lg-3 col-6 text-center">
+            <span data-toggle="counter-up">{{user_count}}</span>
+            <p style="margin-top:15px;">Users</p>
+          </div>
+
+          <div class="col-lg-3 col-6 text-center">
+            <span data-toggle="counter-up">{{projects}}</span>
+            <p style="margin-top:15px;">Projects</p>
+          </div>
+
+          <div class="col-lg-3 col-6 text-center">
+            <span data-toggle="counter-up">{{sla_count}}</span>
+            <p style="margin-top:15px;">SLA Managed</p>
+          </div>
+
+          <div class="col-lg-3 col-6 text-center">
+            <span data-toggle="counter-up">{{website_hits}}</span>
+            <p style="margin-top:15px;">Hits</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Counts Section -->
+
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Services</span>
+          <h2>Services</h2>
+          <p>All Service we offer to user in Vista
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-desktop"></i></div>
+              <h4><a href="/account">SLA Management Console</a></h4>
+              <p>All the SLA is Present here, User Can rasie request to Update/Delete SLA.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-clipboard"></i></div>
+              <h4><a href="#">SLA Dashboard</a></h4>
+              <p>SLA details has been provided</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-cloud-download"></i></div>
+              <h4><a href="/download_sla">SLA Download</a></h4>
+              <p>User can download/Mail SLA Within a Particular time frame</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-address-card"></i></div>
+              <h4><a href="/services">Service Request Control</a></h4>
+              <p>New SLA Add/Update/Del request is available here and Manager can also Approve/Reject Requests</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-newspaper-o"></i></div>
+              <h4><a href="#">RMA KPI Data</a></h4>
+              <p>RMA KPI Data</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+            <div class="icon-box">
+              <div class="icon"><i class="fa fa-user-plus"></i></div>
+              <h4><a href="/access_control">Access Management</a></h4>
+              <p>User Rights and Account access Are managed here</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    <!-- ======= Testimonials Section ======= -->
+<!--    Version 2.0-->
+<!--    Minimum 3 Feedback should be there in table, then we will enable it -->
+    <section id="testimonials" class="testimonials section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Testimonials</span>
+          <h2>Testimonials</h2>
+          <p>Our Users review about our Vista</p>
+        </div>
+
+        <div class="owl-carousel testimonials-carousel">
+            {% for testimonial in testimonials %}
+          <div class="testimonial-item">
+            <p>
+              <i class="fa fa-quote-left"></i>
+              {{testimonial.1}}
+              <i class="fa fa-quote-right"></i>
+            </p>
+<!--            <img src="static/img/testimonials-1.jpg" class="testimonial-img" alt="">-->
+            <h3>{{testimonial.0}}</h3>
+            <h4>{{testimonial.2}}</h4>
+          </div>
+          {% endfor %}
+
+
+
+
+        </div>
+
+      </div>
+    </section><!-- End Testimonials Section -->
+
+
+
+    <!-- ======= Team Section ======= -->
+    <section id="team" class="team section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Team</span>
+          <h2>Team</h2>
+          <p>Team who is working on VISTA</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-6">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="static/img/team-3.jpg" width="250px"   class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Sandeep Agrawal</h4>
+                <span>Software Support Specialist</span>
+                <p></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4 mt-lg-0">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="static/img/AkshayS.jpg" width="250px" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Akshay Soni</h4>
+                <span>Associate Software Engineer</span>
+                <p></p>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+
+  </main><!-- End #main -->
+
+
+  <a href="#" class="back-to-top"><i class="fa fa-arrow-circle-up"></i></a>
+
+
+  <!-- JS Files -->
+<!--  <script src="static/js/jquery.easing.min.js"></script>-->
+  <script src="static/js/jquery.waypoints.min.js"></script>
+  <script src="static/js/counterup.min.js"></script>
+<!--  <script src="static/js/owl.carousel.min.js"></script>-->
+
+  <!-- Main JS File -->
+<!--  <script src="static/js/AboutUsmain.js"></script>-->
+
+</body>
+
+</html>
+{% endblock %}

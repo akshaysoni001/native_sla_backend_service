@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vista SLA Monitor Tool</title>
+  <link rel="icon" type="image/x-icon" href="/static/img/favicon-1.png">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+<!--  <link href="img/favicon.png" rel="icon">-->
+<!--  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">-->
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700|Raleway:300,400,400i,500,500i,700,800,900" rel="stylesheet">
+
+  <!-- Bootstrap CSS File -->
+  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/css/css.css" rel="stylesheet">
+  <link href="static/css/icon.css" rel="stylesheet">
+
+  <!-- Libraries CSS Files -->
+<!--  <link href="static/css/nivo-slider.css" rel="stylesheet">-->
+<!--  <link href="static/css/owl.carousel.css" rel="stylesheet">-->
+<!--  <link href="static/css/owl.transitions.css" rel="stylesheet">-->
+<!--  <link href="static/css/font-awesome.min.css" rel="stylesheet">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--  <link href="static/css/animate.min.css" rel="stylesheet">-->
+<!--   <link href="lib/venobox/venobox.css" rel="stylesheet">-->
+
+  <!-- Nivo Slider Theme -->
+<!--  <link href="static/css/nivo-slider-theme.css" rel="stylesheet">-->
+
+  <!-- Main Stylesheet File -->
+  <link href="static/css/style.css" rel="stylesheet">
+
+  <!-- Responsive Stylesheet File -->
+  <link href="static/css/responsive.css" rel="stylesheet">
+
+  <style>
+  .dropdown-menu li{
+		height:40px;
+		margin-bottom:10px;
+	}
+
+ @media (min-width: 992px){
+	.dropdown-menu .dropdown-toggle:after{
+		border-top: .3em solid transparent;
+	    border-right: 0;
+	    border-bottom: .3em solid transparent;
+	    border-left: .3em solid;
+	}
+	.dropdown-menu .dropdown-menu{
+		margin-left:0; margin-right: 0;
+	}
+	.dropdown-menu li{
+		position: relative;
+	}
+	.nav-item .submenu{
+		display: none;
+		position: absolute;
+		left:100%; top:-7px;
+	}
+	.nav-item .submenu-left{
+		right:100%; left:auto;
+	}
+	.dropdown-menu > li:hover > .submenu{
+		display: block;
+	}
+}
+
+.btn1{
+  height: 40px;
+  min-width: 130px;
+  border-radius:40px;
+  background: black;
+  color:whitesmoke;
+  letter-spacing:1px;
+}
+
+.btn1:hover {
+  background-color: #6F4C5B;
+  border-radius:40px;
+  color: white;
+}
+.btn1:focus {
+  background-color: #6F4C5B;
+  color: white;
+  border-radius:40px;
+
+}
+
+  </style>
+
+  <!-- =======================================================
+    Theme Name: eBusiness
+    Theme URL: https://bootstrapmade.com/ebusiness-bootstrap-corporate-template/
+    Author: BootstrapMade.com
+    License: https://bootstrapmade.com/license/
+  ======================================================= -->
+</head>
+
+<body data-spy="scroll" data-target="#navbar-example">
+
+  <div id="preloader"></div>
+
+  <header style="z-index:900px;">
+    <!-- header-area start -->
+    <div id="sticker" class="header-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+
+            <!-- Navigation -->
+            <nav class="navbar navbar-default">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".bs-example-navbar-collapse-1" aria-expanded="false">
+										<span class="sr-only">Toggle navigation</span>
+										<span class="icon-bar"></span>
+										<span class="icon-bar"></span>
+										<span class="icon-bar"></span>
+									</button>
+                <!-- Brand -->
+                <a class="navbar-brand page-scroll sticky-logo" href="index.html">
+                  <h1><span>V</span>ista</h1>
+                  <!-- Uncomment below if you prefer to use an image logo -->
+                  <!-- <img src="img/logo.png" alt="" title=""> -->
+								</a>
+              </div>
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse main-menu bs-example-navbar-collapse-1" id="navbar-example">
+                <ul class="nav navbar-nav navbar-collapse">
+                  <li class="active">
+                    <a class="page-scroll" href="/home">Home</a>
+                  </li>
+
+                  <li class="nav-item dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Services<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a class="dropdown-item" href="#"> SLA Console &raquo </a>
+                      <ul class="submenu dropdown-menu">
+                          <li><a class="dropdown-item" href="/dashboard"> SLA Dashboard</a></li>
+                          <li><a class="dropdown-item" href="/download_sla"> SLA Download</a></li>
+                  <!--				Version 3	-->
+                        <li><a class="dropdown-item" href={{url_for('accountslaview')}}> SLA Management</a></li>
+
+                        <div hidden>  <!--				Remove Div while removing hidden	-->
+                          <!--					version 4	Adding RMA KPI Data-->
+                        <li><a class="dropdown-item" href=""> RMA KPI Data</a></li>
+                          <li><a class="dropdown-item" href="#"> Add On &raquo </a>
+                          <ul class="submenu dropdown-menu">
+                            <li><a class="dropdown-item" href=""> Menu 1</a></li>
+                            <li><a class="dropdown-item" href=""> Menu 2</a></li>
+                          </ul>
+                          </li>
+                          </div>
+                      </ul>
+                      </li>
+
+                      <!--					Version 2 Adding Access Management & Service Request Console-->
+					<li><a href="/access_control">Access Management</a></li>
+					<li><a href="{{url_for('serviceview')}}">Service Request Console</a></li>
+<!--					Version 5 Adding User Conifg Management Console-->
+                      {% if session["user"].user_id =='akshason' %}
+                        <li ><a href="#">User Config Management</a></li>
+    <!--                    version 6 Adding SLA Analysis-->
+                        <li hidden ><a href="#">SLA Analysis</a></li>
+                        <li hidden><a href="#">OCS</a></li>
+
+
+                      <li><a href="#" >Scorecard</a></li>
+                      {% endif %}
+          <div hidden>  <!--				Remove Div while removing hidden	-->
+                      <li><a href="/">Drop Down 2</a></li>
+          </div>
+                    </ul>
+                  </li>
+                  <li>
+                    <a class="page-scroll" href="/about">About Us</a>
+                  </li>
+                  <li>
+                    <a class="page-scroll" href="/contact">Contact Us</a>
+                  </li>
+                </ul>
+              <form action="/home" method="post">
+                <ul class="nav navbar-nav navbar-right ml-auto">
+                <input value="{{session['user_accounts']}}"  id='accounts_len' type='hidden'/>
+                  <li id='switch_menu' class="nav-item dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch Account<span class="caret"></span></a>
+
+                    <ul class="dropdown-menu" role="menu">
+                      {% for i in session["user_accounts"] %}
+                      <li>
+                        <button type="submit" class="btn btn1" name='new_account' value="{{i}}" >{{i}}</button></li>
+                      {% endfor %}
+
+                    </ul>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action" > {{session["user"].user_name}} <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#" class="dropdown-item"><i class="fa fa-user-o"></i>  Account: {{session["user"].account}}</a></li>
+                      
+                      <li><a href="/logout" class="dropdown-item"><i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                  </li>
+
+                </ul>
+
+                </form>
+
+
+              </div>
+              <!-- navbar-collapse -->
+            </nav>
+            <!-- END: Navigation -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- header-area end -->
+  </header>
+  <!-- header end -->
+
+
+<!--  &lt;!&ndash; Start Footer bottom Area &ndash;&gt;-->
+<!--  <footer>-->
+<!--    <div class="footer-area">-->
+<!--      <div class="container">-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-4 col-sm-4 col-xs-12">-->
+<!--            <div class="footer-content">-->
+<!--              <div class="footer-head">-->
+<!--                <div class="footer-logo">-->
+<!--                  <h2><span>e</span>Business</h2>-->
+<!--                </div>-->
+
+<!--                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>-->
+<!--                <div class="footer-icons">-->
+<!--                  <ul>-->
+<!--                    <li>-->
+<!--                      <a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                      <a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                      <a href="#"><i class="fa fa-google"></i></a>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                      <a href="#"><i class="fa fa-pinterest"></i></a>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          &lt;!&ndash; end single footer &ndash;&gt;-->
+<!--          <div class="col-md-4 col-sm-4 col-xs-12">-->
+<!--            <div class="footer-content">-->
+<!--              <div class="footer-head">-->
+<!--                <h4>information</h4>-->
+<!--                <p>-->
+<!--                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.-->
+<!--                </p>-->
+<!--                <div class="footer-contacts">-->
+<!--                  <p><span>Tel:</span> +123 456 789</p>-->
+<!--                  <p><span>Email:</span> contact@example.com</p>-->
+<!--                  <p><span>Working Hours:</span> 9am-5pm</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          &lt;!&ndash; end single footer &ndash;&gt;-->
+<!--          <div class="col-md-4 col-sm-4 col-xs-12">-->
+<!--            <div class="footer-content">-->
+<!--              <div class="footer-head">-->
+<!--                <h4>Instagram</h4>-->
+<!--                <div class="flicker-img">-->
+<!--                  <a href="#"><img src="img/portfolio/1.jpg" alt=""></a>-->
+<!--                  <a href="#"><img src="img/portfolio/2.jpg" alt=""></a>-->
+<!--                  <a href="#"><img src="img/portfolio/3.jpg" alt=""></a>-->
+<!--                  <a href="#"><img src="img/portfolio/4.jpg" alt=""></a>-->
+<!--                  <a href="#"><img src="img/portfolio/5.jpg" alt=""></a>-->
+<!--                  <a href="#"><img src="img/portfolio/6.jpg" alt=""></a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="footer-area-bottom">-->
+<!--      <div class="container">-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-12 col-sm-12 col-xs-12">-->
+<!--            <div class="copyright text-center">-->
+<!--              <p>-->
+<!--                &copy; Copyright <strong>eBusiness</strong>. All Rights Reserved-->
+<!--              </p>-->
+<!--            </div>-->
+<!--            <div class="credits">-->
+<!--              &lt;!&ndash;-->
+<!--                All the links in the footer should remain intact.-->
+<!--                You can delete the links only if you purchased the pro version.-->
+<!--                Licensing information: https://bootstrapmade.com/license/-->
+<!--                Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=eBusiness-->
+<!--              &ndash;&gt;-->
+<!--              Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </footer>-->
+
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+
+  <!-- JavaScript Libraries -->
+  <script src="static/js/jquery.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+<!--   <script src="lib/owlcarousel/owl.carousel.min.js"></script>-->
+<!--   <script src="lib/venobox/venobox.min.js"></script>-->
+<!--   <script src="lib/knob/jquery.knob.js"></script>-->
+<!--  <script src="static/js/wow.min.js"></script>-->
+<!--   <script src="lib/parallax/parallax.js"></script>-->
+<!--   <script src="lib/easing/easing.min.js"></script>-->
+<!--  <script src="static/js/jquery.nivo.slider.js" type="text/javascript"></script>-->
+<!--   <script src="lib/appear/jquery.appear.js"></script>-->
+<!--   <script src="lib/isotope/isotope.pkgd.min.js"></script>-->
+
+  <!-- Contact Form JavaScript File -->
+<!--   <script src="contactform/contactform.js"></script>-->
+
+  <script src="static/js/main.js"></script>
+  <script>
+        var accounts_len = document.getElementById("accounts_len").value;
+        if (accounts_len.length == 1){
+        document.getElementById("switch_menu").style.visibility = "hidden";}
+    </script>
+<script>
+        // Prevent closing from click inside dropdown
+$(document).on('click', '.dropdown-menu', function (e) {
+  e.stopPropagation();
+});
+
+// make it as accordion for smaller screens
+if ($(window).width() < 992) {
+  $('.dropdown-menu a').click(function(e){
+    e.preventDefault();
+      if($(this).next('.submenu').length){
+        $(this).next('.submenu').toggle();
+      }
+      $('.dropdown').on('hide.bs.dropdown', function () {
+     $(this).find('.submenu').hide();
+  })
+  });
+}
+    </script>
+</body>
+
+</html>
+{% block body %} {% endblock %}

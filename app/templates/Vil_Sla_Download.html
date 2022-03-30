@@ -1,0 +1,338 @@
+{% extends "Vil_Sla_Menupage.html" %}
+{% block body %}
+
+{% include 'Alerts.html' %}
+{% block body1 %}
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Us</title>
+    <link href="static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script type="text/javascript" src="static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+<style type="text/css">
+    body {
+    	color: #404E67;
+    	background-image: url("static/img/home.jpg");
+    	background-size:cover;
+		font-family: 'Open Sans', sans-serif;
+		padding: 0px;
+  		padding-top:41px;
+  		margin: 0px;
+	}
+	.form-control {
+		border-color: #d7d7d7;
+		box-shadow: none;
+		font-size:15px;
+	}
+	.form-control:focus, .btn:focus {
+		border-color: #a177ff;
+		box-shadow: 0 0 8px #c2a8ff;
+	}
+    .contact-form {
+        margin: 50px;
+    border-radius: 6px;
+    background: #fff;
+
+    }
+    .contact-form form {
+    	margin-right:20px;
+        background: #fff;
+        padding: 40px;
+        width:auto;
+        border-radius: 6px;
+    }
+    .contact-form h1 {
+		text-align: center;
+		font-size: 50px;
+        margin: 0 0 15px;
+    }
+	.contact-form .form-group {
+		margin-bottom: 20px;
+	}
+    .contact-form .form-control, .contact-form .btn  {
+        border-radius: 2px;
+		min-height: 40px;
+		transition: all 0.5s;
+		outline: none;
+    }
+    .contact-form .btn {
+        background: #a177ff;
+		font-size: 16px;
+		min-height: 50px;
+		border: none;
+    }
+    .contact-form .btn:hover, .contact-form .btn:focus {
+        background: #8048ff;
+		outline: none;
+    }
+	.contact-form .btn i {
+		margin-right: 5px;
+	}
+    .contact-form label {
+        color: #bbb;
+		font-weight: normal;
+    }
+    .contact-form textarea {
+        resize: vertical;
+    }
+	.title {
+		border-bottom: 1px solid #e9e9e9;
+		padding-bottom: 15px;
+		width:auto;
+		margin-left:15px;
+		margin-right:15px;
+		background: #6F4C5B;
+		padding: 10px 30px;
+		color: #fff;
+    }
+    .title h2 {
+		margin: 4px 0 0;
+		font-size: 24px;
+    	text-align: center;
+    	color:whitesmoke;
+	}
+    .hint-text {
+        font-size: 15px;
+		margin-top: 5px;
+		text-align: center;
+		color: white;
+		opacity: 0.8;
+        /* padding-bottom: 25px;
+        opacity: 0.8; */
+    }
+
+
+  /*CheckBox CSS*/
+    /* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+</style>
+</head>
+<body>
+<div class="contact-form card card0 border-0">
+<div class="row d-flex">
+	<div class="title">
+        <h2>SLA Download</h2>
+		</div>
+	<div class="col-lg-5">
+                <div class="card1 pb-5">
+                    <div class="border-line"> <img src="static/img/home.jpg" width="100%" style="background-size:cover;" class="image"> </div>
+                </div>
+            </div>
+
+		<div class="col-lg-7 border-0">
+  <div class="row card2 card border-0 px-4 py-5">
+
+
+	{% with messages = get_flashed_messages(category_filter=["NoData"]) %}
+        {%if messages%}
+            {% for message in messages %}
+                <div class="flashalign">
+                    <p style="font-size:20px; text-align:center; font-family:calibri;"><b style="font-size:30px; color:blue;">Message: </b>{{message}}        </p>
+                </div>
+            {%endfor%}
+
+        {% else %}
+
+	<form action="/download_sla" method="post">
+    <div class="form-group">
+			<label>SLA Number</label>
+			<select class="form-control" style="padding-bottom:10px;" name="sla_number" required>
+				 <option value="" selected disabled>Please choose</option>
+					{% for i in sla_number_with_description %}
+					<option value="{{i}}">&nbsp;&nbsp;{{i.sla_number}}-{{i.sla_description}}</option>
+					{% endfor %}
+			</select>
+	</div>
+        <div class="form-group">
+			<div class="row">
+				<div class="col-lg-6">
+			      <label>From Date</label>
+                    <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                        <input class="form-control" size="16" type="text" value="" name="start_date" id="fromDate" autocomplete="off" required onkeypress="return false;">
+					    <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                  </div>
+				<div class="col-lg-6">
+                    <label>To Date</label>
+                    <div class="input-group date to_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                        <input class="form-control" type="text" value="" name="end_date" id="toDate" autocomplete="off" required onkeypress="return false;">
+					    <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                  </div>
+			</div>
+        </div>
+	  	<div class="form-group">
+			<label class="container" >Sent Mail
+			<input class='' type="checkbox" name="check" value="edit"/>
+            <span class="checkmark"></span>
+            </label>
+		</div>
+	  <div class="row">
+	  <div class="col-lg-4">
+		<button type="submit" class="btn btn-primary btn-block"><i class="fa fa-paper-plane"></i> Download</button>
+	  </div></div>
+  </form>
+	<br>
+      {% endif %}
+    {%endwith%}
+  </div>
+		</div>
+</div>
+
+
+<script>
+  $('.input-group').change(function(){
+          sys_date = new Date();
+          sys_date.setDate(sys_date.getDate() - 1);
+
+          var fromDate=new Date($('#fromDate').val());
+<!--Below Code for Getting Input date -1 (for Future Reference)-->
+<!--          newFromDate=new Date(fromDate);-->
+<!--          fromDate.setDate(newFromDate.getDate() + 1);-->
+
+          var toDate=new Date($('#toDate').val());
+          <!--Below Code for Getting Input date -1 (for Future Reference)-->
+<!--          newToDate=new Date(toDate);-->
+<!--          toDate.setDate(newToDate.getDate() - 1);-->
+
+          $('.form_date').datetimepicker('setStartDate','2010-01-10');
+          $('.form_date').datetimepicker('setEndDate',toDate);
+
+          $('.to_date').datetimepicker('setStartDate',fromDate);
+          $('.to_date').datetimepicker('setEndDate',sys_date);
+
+
+
+  });
+
+
+</script>
+
+    <script type="text/javascript">
+sys_date=new Date();
+sys_date.setDate(sys_date.getDate() - 1);
+
+    $('.form_date').datetimepicker({
+        language:  'en',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+    startDate:'2010-01-01',
+    endDate:sys_date
+    });
+
+    $('.to_date').datetimepicker({
+        language:  'en',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+    startDate:'2010-01-01',
+    endDate:sys_date
+    });
+</script>
+
+
+<script>
+    var btn = document.getElementById('myBtn');
+    var errbtn = document.getElementById("errBtn");
+<!--		Message Modal Pop Up-->
+		{% with messages = get_flashed_messages(category_filter=["message"]) %}
+			{% if messages %}
+				{%- for message in messages %}
+					btn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+<!--		Error Modal Pop Up-->
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% if errors %}
+				{%- for error in errors %}
+					errbtn.click();
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+
+	</script>
+</div>
+
+</body>
+{% endblock %}
+{% endblock %}
+
