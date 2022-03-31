@@ -8,7 +8,7 @@ from sqlalchemy import func
 from datetime import date
 
 
-class SlaConfigDetail:
+class SlaConfigDetail(object):
 
     def __init__(self):
         pass
@@ -24,9 +24,9 @@ class SlaConfigDetail:
             param_type="email", param_account="all", param_name="domain").all()
         config = {
             "all_account":  [value for (value,) in all_account],
-            "sender_email": query_sender_email,
-            "recipent_email": query_recipent_email,
-            "supported_domains": supported_domains
+            "sender_email": query_sender_email.param_value,
+            "recipent_email": query_recipent_email.param_value,
+            "supported_domains": [value for (value,) in supported_domains]
         }
         return config
 
@@ -87,8 +87,8 @@ class User:
         if not self.user_obj:
             self.message = f"User with user_id {self.user_id} does not exist."
             return self.message, self.result, self.pass_change_required
-        result = check_password_hash(self.user_obj.password, self.password)
-        if not result:
+        self.result = check_password_hash(self.user_obj.password, self.password)
+        if not self.result:
             self.message = "Invalid Password"
             self.user_obj.attempt += 1
             db.session.commit()
@@ -104,8 +104,6 @@ class User:
             self.message = "Max attempt reached, account locked, please reset password."
             self.result = False
             return self.message, self.result, self.pass_change_required
-
-        self.result = True
 
         if int(self.user_obj.reset_ind) == 1:
             self.pass_change_required = True

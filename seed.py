@@ -7,11 +7,11 @@ from app.models.models import SlaConfigParam, SlaUserManagement, SlaUserRole, Sl
 
 def sla_config_param():
     db.session.add(SlaConfigParam(1, 'SLA_TYPE', 'vil', 'SLA_DOWNLOAD', 'D-1, TILL_DATE, LAST_MONTH, LAST_3MONTHS, LAST_6MONTHS', 0))
-    db.session.add(SlaConfigParam(2,'EMAIL','ALL','SENDER','vistasupportteam@abc.com',0))
-    db.session.add(SlaConfigParam(57,'ACCOUNT','CALA','EXTENSION','Claro Chile',0))
-    db.session.add(SlaConfigParam(86,'ACCOUNT','Opero','EXTENSION','vil',0))
-    db.session.add(SlaConfigParam(3,'EMAIL','ALL','RECIPIENT','akshaysoni460@gmail.com',0))
-    db.session.add(SlaConfigParam(99,'EMAIL','ALL','DOMAIN','@abc.com',0))
+    db.session.add(SlaConfigParam(2,'email','all','sender','vistasupportteam@abc.com',0))
+    db.session.add(SlaConfigParam(57,'account','CALA','extension','Claro Chile',0))
+    db.session.add(SlaConfigParam(86,'account','Opero','extension','vil',0))
+    db.session.add(SlaConfigParam(3,'email','all','recipent','akshaysoni460@gmail.com',0))
+    db.session.add(SlaConfigParam(99,'email','all','domain','@abc.com',0))
 
 
 
@@ -43,12 +43,12 @@ def seed_sla_data():
 
 def seed_data():
     try:
-        sla_user_management()
-        sla_user_role()
+        # sla_user_management()
+        # sla_user_role()
         sla_config_param()
         # sla_pending_request()
-        sla_config_details()
-        seed_sla_data()
+        # sla_config_details()
+        # seed_sla_data()
         db.session.commit()
 
     except Exception as e:

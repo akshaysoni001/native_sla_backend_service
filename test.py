@@ -176,6 +176,8 @@
 # """
 # all_request = db.session.execute(query).all()
 # print(all_request)
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app.models.models import SlaConfigDetails
 from app import db
 #
@@ -197,8 +199,23 @@ from app import db
 # all_request = db.session.execute(query).all()
 # print(all_request)
 
-slas = db.session.query(SlaConfigDetails.sla_number, SlaConfigDetails.sla_description).\
-            filter_by(account='vil', status=0).all()
+# slas = db.session.query(SlaConfigDetails.sla_number, SlaConfigDetails.sla_description).\
+#             filter_by(account='vil', status=0).all()
+#
+# for sla in slas:
+#     print(sla[1])
+# x= generate_password_hash('admin')
+# result = check_password_hash(x, 'adin')
+# print(result)
+import jwt
+from flask import jsonify
+from datetime import datetime, timedelta
+token = jwt.encode({
+    'user':'admin',
+    # don't foget to wrap it in str function, otherwise it won't work [ i struggled with this one! ]
+    'expiration': str(datetime.utcnow() + timedelta(seconds=60))
+},
+    'hello')
 
-for sla in slas:
-    print(sla[1])
+print(token)
+print(token.decode('utf-8'))

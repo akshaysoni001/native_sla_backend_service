@@ -10,7 +10,9 @@ from flask import make_response
 from app.models.models import SlaUserManagement, SlaUserQuery, SlaConfigDetails
 from app.utils.config import SlaConfigDetail, GetSlaDetails, GetSlaData
 from app import render_template, db, request, redirect, logging, flash
-from datetime import date
+from datetime import date, datetime, timedelta
+from app.utils.authorize import authorize
+import jwt
 from app.utils.config import User
 from app import app, session
 
@@ -31,37 +33,59 @@ class VistaLoginView(Resource):
             return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK)\
                 .make_success_response()
         except Exception as e:
-            return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
-                .make_success_response()
+            return ResponseGenerator(message=e.args, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
 
     def post(self):
         config_detail = SlaConfigDetail()
         config_details = config_detail.get_config_details()
         try:
-            usr = request.form
+            usr = request.json
             user_obj = db.session.query(SlaUserManagement).filter_by(user_id=usr["username"]).first()
             validation_ojb = User(user_id=usr["username"], account=usr["account"],
                                   password=usr["password"], user_obj=user_obj)
             message, result, pass_change_required = validation_ojb.validate_user()
             if not result:
-                return ResponseGenerator('Vil_Sla_Login.html', message=message, config_details=config_details) \
+                message = "Invalid Password"
+                return ResponseGenerator(message=message, status_code=status.HTTP_400_BAD_REQUEST) \
                     .make_error_response()
             else:
                 user_data = validation_ojb.get_user_data()
                 login_user(user_obj)
                 session["user"] = user_data
                 if pass_change_required:
-                    return ResponseGenerator('Vil_Sla_Login.html', reset_ind=1, config_details=config_details) \
+                    message = "Password Change Required"
+                    return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
                         .make_success_response()
                 else:
-                    return make_response(redirect("/home"))
+                    payload = []
+                    token = jwt.encode({
+                        'user_id': user_data.user_id,
+                        'user_name': user_data.user_name,
+                        'account': user_data.account,
+                        'email': user_data.email_id,
+                        'expiration': str(datetime.utcnow() + timedelta(seconds=6000))
+
+                    }, app.config['SECRET_KEY'])
+                    user = {
+                        'user_id': user_data.user_id,
+                        'user_name': user_data.user_name,
+                        'account': user_data.account,
+                        'email': user_data.email_id,
+                    }
+                    payload.append(token.decode('utf-8'))
+                    payload.append(user)
+
+                    return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
+                        .make_success_response()
         except Exception as e:
-            return make_response(render_template('404.html', error=e))
+            return ResponseGenerator(message=e.args, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
 
 
 class VistaHomeView(Resource):
 
-    
+
     def get(self):
         user = session["user"]
         try:
@@ -257,9 +281,10 @@ class RequestsView(Resource):
             data = request.json
             json_obj = JsonGenerator(form_data=data, user=user, account=account)
             json_data, request_type = json_obj.generate_json()
-            raise_request = RequestRaised(user, account, json_data, request_type)
-            message = raise_request.handle_request()
-            return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
+            if not json_obj.redirect:
+                raise_request = RequestRaised(user, account, json_data, request_type)
+                json_obj.message = raise_request.handle_request()
+            return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_200_OK) \
                 .make_success_response()
 
         except Exception as e:

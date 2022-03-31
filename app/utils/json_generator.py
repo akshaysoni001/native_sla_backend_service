@@ -57,7 +57,7 @@ class JsonGenerator(Resource):
         self.json_dict = {
             "account": self.data["account"],
             "name": self.data["name"],
-            "user_id": self.data["username"],
+            "user_id": self.data["id"],
             "email_id": self.data["email"],
             "justification": self.data["remark"]
         }
@@ -76,10 +76,8 @@ class JsonGenerator(Resource):
             self.request_type = "User_Rights"
     
     def reset_password(self):
-        print("reset")
-        pass_obj = ResetPassword(self.data["username"])
+        pass_obj = ResetPassword(self.data["id"])
         self.message = pass_obj.reset_password()
-        flash(self.message)
         self.redirect = True
         # return make_response(redirect('/login'))
     
@@ -87,7 +85,6 @@ class JsonGenerator(Resource):
         obj = ChangePassword(user_id=self.user.user_id, old_password=self.data["oldpassword"],
                              new_password=self.data["newpassword"])
         self.message = obj.change_password()
-        flash(self.message)
         self.redirect = True
 
     def generate_json(self):
