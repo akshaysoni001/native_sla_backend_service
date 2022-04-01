@@ -23,10 +23,15 @@ class RequestRaised:
         mail.send_mail()
 
     def _get_mailing_details(self):
-        mail_user = db.session.query(SlaUserManagement.user_name, SlaUserManagement.email_id).\
+        if self.activity == "registration":
+            self.username = self.new_data["user_id"]
+            self.user_email = self.new_data["email_id"]
+        else:
+            mail_user = db.session.query(SlaUserManagement.user_name, SlaUserManagement.email_id). \
                 filter_by(user_id=self.user_id, deleted=False).first()
-        self.username = mail_user.user_name
-        self.user_email = mail_user.email_id
+            self.username = mail_user.user_name
+            self.user_email = mail_user.email_id
+
 
         obj = db.session.query(SlaUserManagement.email_id, SlaUserManagement.user_name) \
             .outerjoin(SlaUserRole, SlaUserManagement.user_id == SlaUserRole.user_id) \
@@ -65,6 +70,7 @@ class ResetPassword:
     def __init__(self, user_id):
         self.message = None
         self.user_id = user_id
+        self.result = False
 
     def reset_password(self):
         usr = db.session.query(SlaUserManagement).filter_by(user_id=self.user_id, deleted=False).first()
@@ -81,6 +87,7 @@ class ResetPassword:
                            receipent_email=usr.email_id, password=password)
         mail.send_mail()
         self.message = "New pass word has been sent on mail, kindly check and login. "
+        self.result = True
         return self.message
 
 
@@ -90,17 +97,18 @@ class ChangePassword:
         self.user_id = user_id
         self.old_password = old_password
         self.new_password = new_password
+        self.result = False
 
     def change_password(self):
         usr = db.session.query(SlaUserManagement).\
             filter_by(user_id=self.user_id, deleted=False).first()
-        result = check_password_hash(usr.password, self.old_password)
-        if not result:
+        self.result = check_password_hash(usr.password, self.old_password)
+        if not self.result:
             self.message = "Invalid Old Password"
             return "Invalid Old Password"
         usr.password = generate_password_hash(self.new_password)
         usr.reset_ind = 0
         db.session.commit()
-        logout_user()
         self.message = "Password changed successfully. "
+        self.result = True
         return self.message

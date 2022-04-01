@@ -207,15 +207,25 @@ from app import db
 # x= generate_password_hash('admin')
 # result = check_password_hash(x, 'adin')
 # print(result)
-import jwt
-from flask import jsonify
-from datetime import datetime, timedelta
-token = jwt.encode({
-    'user':'admin',
-    # don't foget to wrap it in str function, otherwise it won't work [ i struggled with this one! ]
-    'expiration': str(datetime.utcnow() + timedelta(seconds=60))
-},
-    'hello')
+# import jwt
+# from flask import jsonify
+# from datetime import datetime, timedelta
+# token = jwt.encode({
+#     'user':'admin',
+#     # don't foget to wrap it in str function, otherwise it won't work [ i struggled with this one! ]
+#     'expiration': str(datetime.utcnow() + timedelta(seconds=60))
+# },
+#     'hello')
+#
+# print(token)
+# print(token.decode('utf-8'))
 
-print(token)
-print(token.decode('utf-8'))
+query = """select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
+            justification, status from sla_pending_approval where user_id='admin'
+            and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
+            dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+             and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
+             role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
+             order by sys_creation_date desc"""
+all_request = db.session.execute(query).all()
+print(all_request)

@@ -6,7 +6,7 @@ from app.models.models import SlaConfigParam, SlaUserManagement, SlaUserRole, Sl
 
 
 def sla_config_param():
-    db.session.add(SlaConfigParam(1, 'SLA_TYPE', 'vil', 'SLA_DOWNLOAD', 'D-1, TILL_DATE, LAST_MONTH, LAST_3MONTHS, LAST_6MONTHS', 0))
+    db.session.add(SlaConfigParam(1, 'sla_type', 'vil', 'sla_download', 'D-1, TILL_DATE, LAST_MONTH, LAST_3MONTHS, LAST_6MONTHS', 0))
     db.session.add(SlaConfigParam(2,'email','all','sender','vistasupportteam@abc.com',0))
     db.session.add(SlaConfigParam(57,'account','CALA','extension','Claro Chile',0))
     db.session.add(SlaConfigParam(86,'account','Opero','extension','vil',0))
@@ -18,10 +18,10 @@ def sla_config_param():
 def sla_config_details():
     db.session.add(SlaConfigDetails('vil','RATER', 2,'PROCESSED CDRS AS A PERCENTAGE OF TOTAL CDRS (NUMBER OF SUCCESSFULLY PROCESSED CDRS AS A PERCENTAGE OF TOTAL CDRS) FOR EACH CYCLE.',
                                     'MONTHLY','CRITICAL',None,99.9999,2,True,False,'sla_data_manager_daily',None,False,None,'%'))
-    db.session.add(SlaConfigDetails('vil','RATER',4,'TIMELINESS IN RATING/UPLOADING OF CDRS WITHIN DEFINED TIME OF RECEIPT FROM MEDIATION','MONTHLY','CRITICAL','60_MIN',95.79,3,True,False,'sla_data_manager_daily',None,False,None,'%'))
-    db.session.add(SlaConfigDetails('vil','INV',6,'SUBSCRIBER BILLING ACCURACY','MONTHLY','CRITICAL',None,99.999,6,True,False,'sla_data_manager_daily',None,False,None,'%'))
-    db.session.add(SlaConfigDetails('vil','INV',10,'BILL PROCESSING (PS/PDF HANDOVER - FULL EXTRACT + EBPP+ CONFIRMATION) ','MONTHLY','CRITICAL',None,1,6,True,False,'sla_data_manager_daily',None,False,None,None))
-    db.session.add(SlaConfigDetails('vil','CL',11,'TIMELY GENERATION OF DUNNING EXTRACTS','MONTHLY','CRITICAL','09_AM',2,3,True,False,'sla_data_manager_daily',None,False,None,None))
+    db.session.add(SlaConfigDetails('vil','RATER',41,'TIMELINESS IN RATING/UPLOADING OF CDRS WITHIN DEFINED TIME OF RECEIPT FROM MEDIATION','MONTHLY','CRITICAL','60_MIN',95.79,3,True,False,'sla_data_manager_daily',None,False,None,'%'))
+    db.session.add(SlaConfigDetails('vil','INV',61,'SUBSCRIBER BILLING ACCURACY','MONTHLY','CRITICAL',None,99.999,6,True,False,'sla_data_manager_daily',None,False,None,'%'))
+    db.session.add(SlaConfigDetails('vil','INV',10,'BILL PROCESSING (PS/PDF HANDOVER - FULL EXTRACT + EBPP+ CONFIRMATION) ','MONTHLY','CRITICAL',None,11,61,True,False,'sla_data_manager_daily',None,False,None,None))
+    db.session.add(SlaConfigDetails('vil','CL',11,'TIMELY GENERATION OF DUNNING EXTRACTS','MONTHLY','CRITICAL','09_AM',21,31,True,False,'sla_data_manager_daily',None,False,None,None))
     # db.session.add(SlaConfigDetails(288,'vil','INFRA',18,'APPLICATIONS AVAILABILITY','MONTHLY','CRITICAL',None,99.7,3,True,False,'sla_data_manager_daily',None,False,None,'%'))
 
 
@@ -43,12 +43,12 @@ def seed_sla_data():
 
 def seed_data():
     try:
-        # sla_user_management()
-        # sla_user_role()
+        sla_user_management()
+        sla_user_role()
         sla_config_param()
         # sla_pending_request()
-        # sla_config_details()
-        # seed_sla_data()
+        sla_config_details()
+        seed_sla_data()
         db.session.commit()
 
     except Exception as e:

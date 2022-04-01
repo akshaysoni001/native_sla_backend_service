@@ -14,6 +14,7 @@ class JsonGenerator(Resource):
         self.json_dict = None
         self.message = None
         self.redirect = False
+        self.result = False
 
     def delete_sla(self):
         self.json_dict = {
@@ -74,18 +75,6 @@ class JsonGenerator(Resource):
             self.request_type = "Add Account"
         else:
             self.request_type = "User_Rights"
-    
-    def reset_password(self):
-        pass_obj = ResetPassword(self.data["id"])
-        self.message = pass_obj.reset_password()
-        self.redirect = True
-        # return make_response(redirect('/login'))
-    
-    def change_password(self):
-        obj = ChangePassword(user_id=self.user.user_id, old_password=self.data["oldpassword"],
-                             new_password=self.data["newpassword"])
-        self.message = obj.change_password()
-        self.redirect = True
 
     def generate_json(self):
         if self.data["request"] == "delete":
@@ -96,10 +85,6 @@ class JsonGenerator(Resource):
             self.access()
         elif self.data["request"] == "signup":
             self.registration()
-        elif self.data["request"] == "reset_password":
-            self.reset_password()
-        elif self.data["request"] == "change_password":
-            self.change_password()
         else:
             self.message = "Invalid Request"
             return make_response(render_template('404.html', error=self.message))

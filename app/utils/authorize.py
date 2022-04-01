@@ -14,7 +14,6 @@ def authorize(func):
     def decorated(*args, **kwargs):
         bearer_token = request.headers['Authorization']
         token = str.replace(str(bearer_token), 'Bearer ', '')
-        print(token)
         if not token:
             return ResponseGenerator(message='UnAuthorized', status_code=status.HTTP_401_UNAUTHORIZED) \
                 .make_error_response()

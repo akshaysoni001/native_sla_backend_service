@@ -3,7 +3,7 @@ from flask_login import current_user
 from app.utils.auth import login_user, login_required, logout_user
 from app.utils.actions import ActionMap
 from app.utils.json_generator import JsonGenerator
-from app.utils.requests import RequestRaised
+from app.utils.requests import RequestRaised, ResetPassword, ChangePassword
 from app.utils.response_generator import ResponseGenerator
 from flask_restful import Resource
 from flask import make_response
@@ -51,31 +51,30 @@ class VistaLoginView(Resource):
                     .make_error_response()
             else:
                 user_data = validation_ojb.get_user_data()
-                login_user(user_obj)
-                session["user"] = user_data
+                payload = []
+                token = jwt.encode({
+                    'user_id': user_data.user_id,
+                    'user_name': user_data.user_name,
+                    'account': user_data.account,
+                    'email': user_data.email_id,
+                    'roles': user_data.role,
+                    'expiration': str(datetime.utcnow() + timedelta(seconds=6000))
+                }, app.config['SECRET_KEY'])
+                user = {
+                    'user_id': user_data.user_id,
+                    'user_name': user_data.user_name,
+                    'account': user_data.account,
+                    'email': user_data.email_id,
+                    'roles': user_data.role,
+                }
+                payload.append(token.decode('utf-8'))
+                payload.append(user)
                 if pass_change_required:
-                    message = "Password Change Required"
-                    return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
+                    print(111)
+                    return ResponseGenerator(data=payload, status_code=status.HTTP_201_CREATED) \
                         .make_success_response()
                 else:
-                    payload = []
-                    token = jwt.encode({
-                        'user_id': user_data.user_id,
-                        'user_name': user_data.user_name,
-                        'account': user_data.account,
-                        'email': user_data.email_id,
-                        'expiration': str(datetime.utcnow() + timedelta(seconds=6000))
-
-                    }, app.config['SECRET_KEY'])
-                    user = {
-                        'user_id': user_data.user_id,
-                        'user_name': user_data.user_name,
-                        'account': user_data.account,
-                        'email': user_data.email_id,
-                    }
-                    payload.append(token.decode('utf-8'))
-                    payload.append(user)
-
+                    print(112)
                     return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
                         .make_success_response()
         except Exception as e:
@@ -120,11 +119,13 @@ class VistaHomeView(Resource):
 
 
 class ContactView(Resource):
-    def post(self, user, account):
+    @authorize
+    def post(self):
         try:
-            
             data = request.json
             # Validate Data
+            user_info = data["user"]
+            user, account = user_info["user_id"], user_info["account"]
             insert_data = SlaUserQuery(account=account, user_name=data["name"],
                                        user_id=user, mobile_no=data["phoneNumber"],
                                        email_id=data["email"], service=data["service"], message=data["message"])
@@ -141,8 +142,9 @@ class ContactView(Resource):
 
 
 class AccountSlaView(Resource):
+    @authorize
     def get(self, account):
-        try:            
+        try:
             sla_obj = GetSlaDetails(account=account)
             sla_details = sla_obj.get_sla_details()
             if not sla_details:
@@ -182,6 +184,7 @@ class AccountSlaView(Resource):
 
 
 class ServiceView(Resource):
+    @authorize
     def get(self, user, account):
         try:
             # all_request = db.session.query(SlaPendingRequests).outerjoin(SlaUserRole,
@@ -191,8 +194,8 @@ class ServiceView(Resource):
             # print(all_request)
             query = f"""select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
             justification, status from sla_pending_approval where user_id='{user}'
-            and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
-            dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+            and account='{account}' union select sys_creation_date , activity_id, account, user_id, activity,
+            dynamic_information, justification, status from sla_pending_approval c where c.status='Pending'
              and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
              role='approver' and a.user_id='{user}' and c.dynamic_information like '%' || b.account || '%')
              order by sys_creation_date desc
@@ -217,15 +220,16 @@ class ServiceView(Resource):
             return ResponseGenerator(message=e, status_code=status.HTTP_200_OK) \
                 .make_error_response()
 
-    
+    @authorize
     def post(self, user, account):
         try:
             data = request.json
+
             raised_request = ActionMap(
-                raised_user_id=user,
+                raised_user_id=data["user_id"],
                 activity=data["activity"],
                 activity_id=data["activity_id"],
-                raised_account=account,
+                raised_account=data["account"],
                 info=data["dynamic_information"],
                 remark=data["remark"],
                 action=data["action"]
@@ -240,7 +244,7 @@ class ServiceView(Resource):
 
 
 class SlaDownloadView(Resource):
-    
+    @authorize
     def get(self, account):
         try:
             slas = db.session.query(SlaConfigDetails.sla_number, SlaConfigDetails.sla_description).\
@@ -259,7 +263,7 @@ class SlaDownloadView(Resource):
             return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
                 .make_error_response()
 
-    
+    @authorize
     def post(self, account):
         # data = request.form
         message = "SLA download successful. "
@@ -276,14 +280,19 @@ class AccessControlView(Resource):
 
 
 class RequestsView(Resource):
-    def post(self, user, account):
+    @authorize
+    def post(self):
         try:
             data = request.json
+            user_info = data["user"]
+            user, account = user_info["user_id"], user_info["account"]
             json_obj = JsonGenerator(form_data=data, user=user, account=account)
             json_data, request_type = json_obj.generate_json()
-            if not json_obj.redirect:
-                raise_request = RequestRaised(user, account, json_data, request_type)
-                json_obj.message = raise_request.handle_request()
+            if json_obj.redirect:
+                return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_205_RESET_CONTENT) \
+                    .make_success_response()
+            raise_request = RequestRaised(user, account, json_data, request_type)
+            json_obj.message = raise_request.handle_request()
             return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_200_OK) \
                 .make_success_response()
 
@@ -292,8 +301,52 @@ class RequestsView(Resource):
                 .make_error_response()
 
 
+class PasswordChange(Resource):
+    def post(self):
+        data = request.json
+        obj = ChangePassword(user_id=data["user_id"], old_password=data["old_password"],
+                                 new_password=data["new_password"])
+        message = obj.change_password()
+        if not obj.result:
+            return ResponseGenerator(message=message, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
+        return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
+            .make_success_response()
+
+
+
+class SignUpView(Resource):
+    def post(self):
+        try:
+            data = request.json
+            user, account = data["id"], data["account"]
+            json_obj = JsonGenerator(form_data=data, user=user, account=account)
+            json_data, request_type = json_obj.generate_json()
+            if not json_obj.redirect:
+                raise_request = RequestRaised(user, account, json_data, request_type)
+                json_obj.message = raise_request.handle_request()
+            return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_200_OK) \
+                .make_success_response()
+        except Exception as e:
+            return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
+
+
+class ResetPasswordView(Resource):
+    def post(self):
+        data = request.json
+        pass_obj = ResetPassword(data["id"])
+        pass_obj.reset_password()
+        if pass_obj.result:
+            return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_200_OK) \
+                .make_success_response()
+        return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_400_BAD_REQUEST) \
+            .make_error_response()
+
+        # return make_response(redirect('/login'))
+
 class Logout(Resource):
-    
+    @authorize
     def get(self):
         try:
             logout_user()
