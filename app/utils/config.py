@@ -98,6 +98,7 @@ class User:
 
         if self.account not in user_accounts:
             self.message = f"You don't have rights to access account {self.account}."
+            self.result = False
             return self.message, self.result, self.pass_change_required
 
         if self.user_obj.attempt > 2:

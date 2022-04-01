@@ -46,7 +46,7 @@ def seed_data():
         sla_user_management()
         sla_user_role()
         sla_config_param()
-        # sla_pending_request()
+        # # sla_pending_request()
         sla_config_details()
         seed_sla_data()
         db.session.commit()

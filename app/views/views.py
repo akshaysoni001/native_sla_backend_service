@@ -46,7 +46,6 @@ class VistaLoginView(Resource):
                                   password=usr["password"], user_obj=user_obj)
             message, result, pass_change_required = validation_ojb.validate_user()
             if not result:
-                message = "Invalid Password"
                 return ResponseGenerator(message=message, status_code=status.HTTP_400_BAD_REQUEST) \
                     .make_error_response()
             else:
@@ -128,7 +127,7 @@ class ContactView(Resource):
             user, account = user_info["user_id"], user_info["account"]
             insert_data = SlaUserQuery(account=account, user_name=data["name"],
                                        user_id=user, mobile_no=data["phoneNumber"],
-                                       email_id=data["email"], service=data["service"], message=data["message"])
+                                       email_id=data["email"], service=data["select"], message=data["message"])
             db.session.add(insert_data)
             db.session.commit()
             message = "Thanks for your feedback."
@@ -214,10 +213,11 @@ class ServiceView(Resource):
                     "status": req.status
                 }
                 payload.append(data)
+                print(payload)
             return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
                 .make_success_response()
         except Exception as e:
-            return ResponseGenerator(message=e, status_code=status.HTTP_200_OK) \
+            return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
                 .make_error_response()
 
     @authorize
