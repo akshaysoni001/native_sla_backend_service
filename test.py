@@ -178,7 +178,7 @@
 # print(all_request)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.models.models import SlaConfigDetails
+from app.models.models import SlaConfigDetails, SlaPendingRequests
 from app import db
 #
 # sla_details = db.session.query(SlaConfigDetails).filter_by(status=0,
@@ -220,12 +220,18 @@ from app import db
 # print(token)
 # print(token.decode('utf-8'))
 
-query = """select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
-            justification, status from sla_pending_approval where user_id='admin'
-            and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
-            dynamic_information, justification, status from sla_pending_approval c where c.status='p'
-             and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
-             role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
-             order by sys_creation_date desc"""
-all_request = db.session.execute(query).all()
-print(all_request)
+# query = """select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
+#             justification, status from sla_pending_approval where user_id='admin'
+#             and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
+#             dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+#              and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
+#              role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
+#              order by sys_creation_date desc"""
+# all_request = db.session.execute(query).all()
+# print(all_request)
+
+pending_request = db.session.query(SlaPendingRequests).filter_by(
+            activity_id=12
+        ).first()
+print(pending_request)
+

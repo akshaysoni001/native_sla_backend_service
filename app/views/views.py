@@ -57,7 +57,7 @@ class VistaLoginView(Resource):
                     'account': user_data.account,
                     'email': user_data.email_id,
                     'roles': user_data.role,
-                    'expiration': str(datetime.utcnow() + timedelta(seconds=6000))
+                    'expiration': str(datetime.utcnow() + timedelta(seconds=50))
                 }, app.config['SECRET_KEY'])
                 user = {
                     'user_id': user_data.user_id,
