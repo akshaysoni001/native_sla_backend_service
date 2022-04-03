@@ -17,7 +17,7 @@ class MessageService:
         we will notify you soon.
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
 
         notification_message = self._request_notification()
@@ -30,7 +30,7 @@ class MessageService:
         Your request for {self.request} has been approved.
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
         if self.request == "registration":
             self.notification_message = self._registration_details()
@@ -45,7 +45,7 @@ class MessageService:
         Rejection_reason = {self.remark}
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
         self.message = message
 
@@ -58,7 +58,7 @@ class MessageService:
         password = {self.password}
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
 
         return message
@@ -71,7 +71,7 @@ class MessageService:
         login password : {self.password}
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
 
         self.message = message
@@ -82,7 +82,7 @@ class MessageService:
         we have received request for {self.request}. Please check and take action.
         
         Thanks & Regards,
-        Vista Support Team 
+        Native SLA Support Team
         """
 
         return message

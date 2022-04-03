@@ -39,18 +39,18 @@ class MailService:
         # send user mail
         print("#############User Email###########")
         print(self.mail_body)
-        self.usr_mail = Message("Vista Notification", recipients=self.receipent.split())
+        self.usr_mail = Message("Native SLA Notification", recipients=self.receipent.split())
         self.usr_mail.body = self.mail_body
 
         if self.notification_mail_body:
             print("#######Notification Email#######")
             print(self.notification_mail_body)
             if self.approver and self.type == "request_raised":
-                self.notify_mail = Message("Vista Notification", recipients=self.approver.split())
+                self.notify_mail = Message("Native SLA Notification", recipients=self.approver.split())
                 self.notify_mail.body = self.notification_mail_body
                 # mail.send(notify_mail)
             if self.request == "registration" and self.type == "approve":
-                self.notify_mail = Message("Vista Login Details", recipients=self.receipent.split())
+                self.notify_mail = Message("Native Login Details", recipients=self.receipent.split())
                 self.notify_mail.body = self.notification_mail_body
                 # mail.send(notify_mail)
 
