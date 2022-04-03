@@ -7,8 +7,9 @@ from app.utils.requests import RequestRaised, ResetPassword, ChangePassword
 from app.utils.response_generator import ResponseGenerator
 from flask_restful import Resource
 from flask import make_response
-from app.models.models import SlaUserManagement, SlaUserQuery, SlaConfigDetails
-from app.utils.config import SlaConfigDetail, GetSlaDetails, GetSlaData
+from app.models.models import SlaUserManagement, SlaUserQuery, SlaGlobalConfiguration, SlaConfigDetails, SlaDataModel, \
+    SlaUserRole
+from app.utils.config import GlobalConfiguration, GetSlaDetails, GetSlaData
 from app import render_template, db, request, redirect, logging, flash
 from datetime import date, datetime, timedelta
 from app.utils.authorize import authorize
@@ -27,7 +28,7 @@ def page_not_found(e):
 class VistaLoginView(Resource):
     def get(self):
         try:
-            config_detail = SlaConfigDetail()
+            config_detail = GlobalConfiguration()
             config_details = config_detail.get_config_details()
             payload = [config_details]
             return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK)\
@@ -37,7 +38,7 @@ class VistaLoginView(Resource):
                 .make_error_response()
 
     def post(self):
-        config_detail = SlaConfigDetail()
+        config_detail = GlobalConfiguration()
         config_details = config_detail.get_config_details()
         try:
             usr = request.json
@@ -69,11 +70,9 @@ class VistaLoginView(Resource):
                 payload.append(token.decode('utf-8'))
                 payload.append(user)
                 if pass_change_required:
-                    print(111)
                     return ResponseGenerator(data=payload, status_code=status.HTTP_201_CREATED) \
                         .make_success_response()
                 else:
-                    print(112)
                     return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
                         .make_success_response()
         except Exception as e:
@@ -82,18 +81,54 @@ class VistaLoginView(Resource):
 
 
 class VistaHomeView(Resource):
-
-
-    def get(self):
-        user = session["user"]
+    def get(self, user, account):
         try:
-            user_obj = User(user_id=user.user_id, account=user.account)
-            user_accounts = user_obj.get_user_accounts()
-            session["user_accounts"] = user_accounts
-            return ResponseGenerator('Vil_Sla_Homepage.html') \
+            application_list = db.session.query(SlaGlobalConfiguration.value).filter_by(account=account,
+                                                                                        type="account",
+                                                                                        sub_type="applications").all()
+            slas = db.session.query(SlaConfigDetails.sla_number).filter_by(account=account).all()
+            sla_met = db.session.query(SlaDataModel.sla_number).filter_by(account=account, sla_met=True).all();
+            sla_breached = db.session.query(SlaDataModel.sla_number).filter_by(account=account, sla_met=False).all();
+            sla_data = db.session.query(SlaDataModel).filter_by(account=account).all();
+            sla_owner = db.session.query(SlaUserManagement.user_name, SlaUserRole.account).outerjoin(SlaUserRole,
+                                                                                                     SlaUserManagement.user_id == SlaUserRole.user_id).filter(
+                SlaUserRole.account == account, SlaUserRole.role == "manager").all();
+            applications = [value for (value,) in application_list]
+            slas = [value for (value,) in slas]
+            sla_met = [value for (value,) in sla_met]
+            sla_breached = [value for (value,) in sla_breached]
+            sla_owners = [{'user_name': value, 'account': value1} for (value, value1) in sla_owner]
+            #
+            apps = []
+            for app in applications[0].split(','):
+                app = {'color': "green",
+                            'icon': "fas fa-mobile",
+                            'subtitle': "Design",
+                            'title': app}
+                apps.append(app)
+            all_sla=[]
+            for sla in sla_data:
+                dic = {'id':sla.id,
+                                    'account':sla.account,
+                                    'application':sla.application,
+                                    'sla_number':sla.sla_number,
+                                    'sla_percentage':sla.sla_percentage,
+                                    'sla_type':sla.sla_type}
+                all_sla.append(dic)
+            payload = {'applications': apps,
+                       'slas': slas,
+                       'sla_met': sla_met,
+                       'sla_breached': sla_breached,
+                       'sla_data': all_sla,
+                        'sla_owners': sla_owners
+                       }
+            return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
                 .make_success_response()
+
         except Exception as e:
-            return make_response(render_template('404.html', error=e))
+            return ResponseGenerator(message=e.args, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
+
 
     
     def post(self):
@@ -118,7 +153,7 @@ class VistaHomeView(Resource):
 
 
 class ContactView(Resource):
-    @authorize
+    # @authorize
     def post(self):
         try:
             data = request.json
@@ -141,7 +176,7 @@ class ContactView(Resource):
 
 
 class AccountSlaView(Resource):
-    @authorize
+    # @authorize
     def get(self, account):
         try:
             sla_obj = GetSlaDetails(account=account)
@@ -150,8 +185,12 @@ class AccountSlaView(Resource):
                 message = "No Sla is configured. "
                 return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
                     .make_success_response()
-
-            payload = []
+            application_list = db.session.query(SlaGlobalConfiguration.value).filter_by(account=account,
+                                                                                        type="account",
+                                                                                        sub_type="applications").all()
+            applications = [value for (value,) in application_list]
+            payload = [applications[0].split(',')]
+            # payload = []
             for sla in sla_details:
                 data = {
                     "id": sla.id,
@@ -160,19 +199,9 @@ class AccountSlaView(Resource):
                     "application": sla.application,
                     "sla_number": sla.sla_number,
                     "sla_description": sla.sla_description,
-                    "frequency": sla.frequency,
-                    "level_type": sla.level_type,
                     "sla_type": sla.sla_type,
                     "target": sla.target,
-                    "weightage": sla.weightage,
-                    "penalty": sla.penalty,
-                    "circle_level_sla": sla.circle_level_sla,
-                    "table_name": sla.table_name,
-                    "sla_cal_condition": sla.sla_cal_condition,
-                    "status": sla.status,
-                    "user_id": sla.user_id,
-                    "indicator": sla.indicator
-
+                    "penalty": sla.penalty
                 }
                 payload.append(data)
             return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
@@ -183,7 +212,7 @@ class AccountSlaView(Resource):
 
 
 class ServiceView(Resource):
-    @authorize
+    # @authorize
     def get(self, user, account):
         try:
             # all_request = db.session.query(SlaPendingRequests).outerjoin(SlaUserRole,
@@ -192,11 +221,11 @@ class ServiceView(Resource):
             #     user_id = user.user_id).first().role == "approver", SlaPendingRequests.user_id==user.user_id)).all()
             # print(all_request)
             query = f"""select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
-            justification, status from sla_pending_approval where user_id='{user}'
+            reason, remark, status from sla_pending_approval where user_id='{user}'
             and account='{account}' union select sys_creation_date , activity_id, account, user_id, activity,
-            dynamic_information, justification, status from sla_pending_approval c where c.status='Pending'
+            dynamic_information, reason, remark, status from sla_pending_approval c where c.status='pending'
              and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
-             role='approver' and a.user_id='{user}' and c.dynamic_information like '%' || b.account || '%')
+             role='manager' and a.user_id='{user}' and c.dynamic_information like '%' || b.account || '%')
              order by sys_creation_date desc
             """
             all_request = db.session.execute(query).all()
@@ -208,23 +237,21 @@ class ServiceView(Resource):
                     "activity": req.activity,
                     "activity_id": req.activity_id,
                     "dynamic_information": req.dynamic_information,
-                    # "justification": req.justification,
-                    "remark": req.justification,
+                    "reason": req.reason,
+                    "remark": req.remark,
                     "status": req.status
                 }
                 payload.append(data)
-                print(payload)
             return ResponseGenerator(data=payload, status_code=status.HTTP_200_OK) \
                 .make_success_response()
         except Exception as e:
             return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
                 .make_error_response()
 
-    @authorize
+    # @authorize
     def post(self, user, account):
         try:
             data = request.json
-
             raised_request = ActionMap(
                 raised_user_id=data["user_id"],
                 activity=data["activity"],
@@ -244,11 +271,11 @@ class ServiceView(Resource):
 
 
 class SlaDownloadView(Resource):
-    @authorize
+    # # @authorize
     def get(self, account):
         try:
             slas = db.session.query(SlaConfigDetails.sla_number, SlaConfigDetails.sla_description).\
-                filter_by(account=account, status=0).all()
+                filter_by(account=account, deleted=False).all()
             if not slas:
                 message = "No Sla is configured. "
                 return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
@@ -263,7 +290,7 @@ class SlaDownloadView(Resource):
             return ResponseGenerator(message=e, status_code=status.HTTP_400_BAD_REQUEST) \
                 .make_error_response()
 
-    @authorize
+    # @authorize
     def post(self, account):
         # data = request.form
         message = "SLA download successful. "
@@ -273,14 +300,14 @@ class SlaDownloadView(Resource):
 
 class AccessControlView(Resource):
     def get(self):
-        config_detail = SlaConfigDetail()
+        config_detail = GlobalConfiguration()
         config_details = config_detail.get_config_details()
         return ResponseGenerator(data=config_details, status_code=status.HTTP_200_OK) \
             .make_success_response()
 
 
 class RequestsView(Resource):
-    @authorize
+    # @authorize
     def post(self):
         try:
             data = request.json
@@ -288,6 +315,9 @@ class RequestsView(Resource):
             user, account = user_info["user_id"], user_info["account"]
             json_obj = JsonGenerator(form_data=data, user=user, account=account)
             json_data, request_type = json_obj.generate_json()
+            if not json_obj.result:
+                return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_400_BAD_REQUEST) \
+                    .make_error_response()
             if json_obj.redirect:
                 return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_205_RESET_CONTENT) \
                     .make_success_response()
@@ -303,17 +333,19 @@ class RequestsView(Resource):
 
 class PasswordChange(Resource):
     def post(self):
-        data = request.json
-        obj = ChangePassword(user_id=data["user_id"], old_password=data["old_password"],
-                                 new_password=data["new_password"])
-        message = obj.change_password()
-        if not obj.result:
-            return ResponseGenerator(message=message, status_code=status.HTTP_400_BAD_REQUEST) \
+        try:
+            data = request.json
+            obj = ChangePassword(user_id=data["user_id"], old_password=data["old_password"],
+                                     new_password=data["new_password"])
+            message = obj.change_password()
+            if not obj.result:
+                return ResponseGenerator(message=message, status_code=status.HTTP_400_BAD_REQUEST) \
+                    .make_error_response()
+            return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
+                .make_success_response()
+        except Exception as e:
+            return ResponseGenerator(message=e.args, status_code=status.HTTP_400_BAD_REQUEST) \
                 .make_error_response()
-        return ResponseGenerator(message=message, status_code=status.HTTP_200_OK) \
-            .make_success_response()
-
-
 
 class SignUpView(Resource):
     def post(self):
@@ -323,7 +355,8 @@ class SignUpView(Resource):
             json_obj = JsonGenerator(form_data=data, user=user, account=account)
             json_data, request_type = json_obj.generate_json()
             if not json_obj.redirect:
-                raise_request = RequestRaised(user, account, json_data, request_type)
+                raise_request = RequestRaised(user_id=user, user_account=account,
+                                              new_data=json_data, request_type=request_type)
                 json_obj.message = raise_request.handle_request()
             return ResponseGenerator(message=json_obj.message, status_code=status.HTTP_200_OK) \
                 .make_success_response()
@@ -334,26 +367,19 @@ class SignUpView(Resource):
 
 class ResetPasswordView(Resource):
     def post(self):
-        data = request.json
-        pass_obj = ResetPassword(data["id"])
-        pass_obj.reset_password()
-        if pass_obj.result:
-            return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_200_OK) \
-                .make_success_response()
-        return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_400_BAD_REQUEST) \
-            .make_error_response()
-
-        # return make_response(redirect('/login'))
-
-class Logout(Resource):
-    @authorize
-    def get(self):
         try:
-            logout_user()
-            flash("Logout Successful. ")
-            return make_response(redirect('/login'))
+            data = request.json
+            pass_obj = ResetPassword(data["id"])
+            pass_obj.reset_password()
+            if pass_obj.result:
+                return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_200_OK) \
+                    .make_success_response()
+            return ResponseGenerator(message=pass_obj.message, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
         except Exception as e:
-            return make_response(render_template('404.html', error=e))
+            return ResponseGenerator(message=e.args, status_code=status.HTTP_400_BAD_REQUEST) \
+                .make_error_response()
+        # return make_response(redirect('/login'))
 
 
 class SlaDashboardView(Resource):
@@ -362,8 +388,6 @@ class SlaDashboardView(Resource):
         today = date.today()
         sla_obj = GetSlaData(today)
         sla_data = sla_obj.get_sla_details()
-        for i in sla_data:
-            print(i)
         return make_response(render_template("Vil_Sla_Dashboard.html", r=sla_data, dashboard_header=["Hello"]))
 
     

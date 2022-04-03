@@ -28,38 +28,25 @@ class ActionMap:
                 application=self.info["application"],
                 sla_number=self.info["sla_number"],
                 sla_description=self.info["sla_description"],
-                frequency=self.info["frequency"],
-                level_type=self.info["level_type"],
                 sla_type=self.info["sla_type"],
                 target=self.info["target"],
-                weightage=self.info["weightage"],
                 penalty=self.info["penalty"],
-                circle_level_sla=self.info["circle_level_sla"],
-                table_name=self.info["table_name"],
-                sla_cal_condition=self.info["sla_cal_condition"],
-                status=self.info["status"],
-                user_id=self.raised_user_id,
-                indicator=self.info["indicator"])
+                )
 
             db.session.add(obj)
         elif self.activity == "update_sla":
             sla_obj = db.session.query(SlaConfigDetails).filter_by(
                 account=self.info["account"], application=self.info["application"], sla_number=self.info["sla_number"],
-                deleted=False).first()
-            sla_obj.sla_number = self.info["sla_number"],
-            sla_obj.sla_description = self.info["sla_description"],
-            sla_obj.frequency = self.info["frequency"],
-            sla_obj.level_type = self.info["level_type"],
-            sla_obj.sla_type = self.info["sla_type"],
-            sla_obj.target = self.info["target"],
-            sla_obj.weightage = self.info["weightage"],
-            sla_obj.penalty = self.info["penalty"],
-            sla_obj.circle_level_sla = self.info["circle_level_sla"],
-            sla_obj.table_name = self.info["table_name"],
-            sla_obj.sla_cal_condition = self.info["sla_cal_condition"],
-            sla_obj.status = self.info["status"],
-            sla_obj.user_id = self.raised_user_id,
-            sla_obj.indicator = self.info["indicator"]
+                deleted=False).one()
+
+            # sla_obj.sla_number = self.info["sla_number"],
+            print(self.info["sla_type"], type(self.info["sla_type"]))
+            print(sla_obj.sla_type, type(sla_obj.sla_type))
+            sla_obj.sla_number = self.info["sla_number"]
+            sla_obj.sla_description = self.info["sla_description"]
+            # sla_obj.sla_type = self.info["sla_type"],
+            sla_obj.target = self.info["target"]
+            sla_obj.penalty = self.info["penalty"]
 
         elif self.activity == "delete_sla":
             sla_obj = db.session.query(SlaConfigDetails).filter_by(
@@ -74,7 +61,7 @@ class ActionMap:
         elif self.activity == "User_Rights":
             user_config_obj = db.session.query(SlaUserRole).filter_by(user_id=self.raised_user_id,
                                                                       account=self.raised_account, deleted=False).first()
-            user_config_obj.role = "write"
+            user_config_obj.role = "Lead"
 
         elif self.activity == "registration":
             password = password_genrator()
@@ -93,11 +80,11 @@ class ActionMap:
             return self.message
 
         if self.message is None:
-            self.status = 'Complete'
+            self.status = 'Approved'
             self.message = "Request approved. "
 
     def _reject(self):
-        self.status = 'Reject'
+        self.status = 'Rejected'
         self.message = "Request rejected. "
         return self.message
 
@@ -106,6 +93,7 @@ class ActionMap:
             activity_id=self.activity_id
         ).first()
         pending_request.status = self.status
+        pending_request.remark = self.remark
         db.session.commit()
 
     def _send_mail(self):

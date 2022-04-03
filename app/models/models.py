@@ -28,61 +28,38 @@ class SlaConfigDetails(db.Model):
     application = db.Column(db.String(64))
     sla_number = db.Column(db.Integer)
     sla_description = db.Column(db.String(200))
-    frequency = db.Column(db.String(64))
-    level_type = db.Column(db.String(64))
     sla_type = db.Column(db.String(64))
     target = db.Column(db.Integer)
-    weightage = db.Column(db.Integer)
     penalty = db.Column(db.Boolean)
-    circle_level_sla = db.Column(db.Boolean)
-    table_name = db.Column(db.String(64))
-    sla_cal_condition = db.Column(db.String(64))
-    status = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.String(64))
-    indicator = db.Column(db.String(64))
     deleted = db.Column(db.Boolean, default=False)
 
-    def __init__(self, account, application, sla_number, sla_description, frequency,
-                 level_type, sla_type, target, weightage, penalty,
-                 circle_level_sla,  table_name, sla_cal_condition, status, user_id, indicator):
+    def __init__(self, account, application, sla_number, sla_description
+                 , sla_type, target, penalty):
         self.account = account
         self.application = application
         self.sla_number = sla_number
         self.sla_description = sla_description
-        self.frequency = frequency
-        self.level_type = level_type
         self.sla_type = sla_type
         self.target = target
-        self.weightage = weightage
         self.penalty = penalty
-        self.circle_level_sla = circle_level_sla
-        self.table_name = table_name
-        self.sla_cal_condition = sla_cal_condition
-        self.status = status
-        self.user_id = user_id
-        self.indicator = indicator
 
 
-class SlaConfigParam(db.Model):
-    __tablename__ = "sla_config_param"
+class SlaGlobalConfiguration(db.Model):
+    __tablename__ = "sla_global_configuration"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sys_creation_date = db.Column(db.DateTime, default=datetime.utcnow())
     sys_update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    activity_id = db.Column(db.Integer)
-    param_type = db.Column(db.String(64))
-    param_account = db.Column(db.String(64))
-    param_name = db.Column(db.String(64))
-    param_value = db.Column(db.String(64))
-    status = db.Column(db.Integer)
+    type = db.Column(db.String(64))
+    account = db.Column(db.String(64))
+    sub_type = db.Column(db.String(64))
+    value = db.Column(db.String(64))
+    deleted = db.Column(db.Boolean, default=False)
 
-    def __init__(self, activity_id, param_type, param_account, param_name, param_value, status):
-        
-        self.activity_id = activity_id
-        self.param_type = param_type
-        self.param_account = param_account
-        self.param_name = param_name
-        self.param_value = param_value
-        self.status = status
+    def __init__(self, type, account,sub_type, value):
+        self.type = type
+        self.account = account
+        self.sub_type = sub_type
+        self.value = value
 
 
 class SlaUserManagement(UserMixin, db.Model):
@@ -118,14 +95,12 @@ class SlaUserRole(db.Model):
     sys_update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     account = db.Column(db.String(64))
     role = db.Column(db.String(64))
-    status = db.Column(db.String(64))
     deleted = db.Column(db.Boolean, default=False)
 
-    def __init__(self, user_id, account, role='read', status=0):
+    def __init__(self, user_id, account, role='default'):
         self.user_id = user_id
         self.account = account
         self.role = role
-        self.status = status
 
 
 class SlaUserQuery(db.Model):
@@ -160,16 +135,16 @@ class SlaPendingRequests(db.Model):
     user_id = db.Column(db.String(64))
     activity = db.Column(db.String(64))
     dynamic_information = db.Column(JSON)
-    justification = db.Column(db.String(400))
+    reason = db.Column(db.String(400))
     remark = db.Column(db.String(64))
-    status = db.Column(db.String(10), default='Pending')
+    status = db.Column(db.String(10), default='pending')
 
-    def __init__(self, account, user_id, activity, info, justification, remark=' ', status='Pending'):
+    def __init__(self, account, user_id, activity, info, reason, remark=' ', status='Pending'):
         self.account = account
         self.user_id = user_id
         self.activity = activity
         self.dynamic_information = info
-        self.justification = justification
+        self.reason = reason
         self.remark = remark
         self.status = status
 
@@ -180,6 +155,7 @@ class SlaDataModel(db.Model):
     sys_creation_date = db.Column(db.DateTime, default=datetime.utcnow())
     sys_update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     account = db.Column(db.String(64))
+    application = db.Column(db.String(64))
     sla_date = db.Column(db.Date)
     sla_number = db.Column(db.Integer)
     sla_type = db.Column(db.String(64))
@@ -188,9 +164,10 @@ class SlaDataModel(db.Model):
     sla_percentage = db.Column(db.Float)
     sla_met = db.Column(db.Boolean)
 
-    def __init__(self, account, sla_date, sla_number, sla_type, total_reqeust,
+    def __init__(self, account, application, sla_date, sla_number, sla_type, total_reqeust,
                  within_sla_reqeust, sla_percentage, sla_met):
         self.account = account
+        self.application = application
         self.sla_date = sla_date
         self.sla_number = sla_number
         self.sla_type = sla_type

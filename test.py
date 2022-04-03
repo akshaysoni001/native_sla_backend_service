@@ -178,7 +178,8 @@
 # print(all_request)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.models.models import SlaConfigDetails, SlaPendingRequests
+from app.models.models import SlaConfigDetails, SlaPendingRequests, SlaGlobalConfiguration, SlaDataModel, \
+    SlaUserManagement, SlaUserRole
 from app import db
 #
 # sla_details = db.session.query(SlaConfigDetails).filter_by(status=0,
@@ -221,17 +222,44 @@ from app import db
 # print(token.decode('utf-8'))
 
 # query = """select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
-#             justification, status from sla_pending_approval where user_id='admin'
-#             and account='vil' union select sys_creation_date , activity_id, account, user_id, activity,
-#             dynamic_information, justification, status from sla_pending_approval c where c.status='p'
+#             reason, remark, status from sla_pending_approval where user_id='admin'
+#             and account='Maxico' union select sys_creation_date , activity_id, account, user_id, activity,
+#             dynamic_information, reason, remark, status from sla_pending_approval c where c.status='pending'
 #              and exists (select  a.* from sla_user_management a, sla_user_role b where a.id = b.id and
-#              role='approver' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
+#              role='manager' and a.user_id='admin' and c.dynamic_information like '%' || b.account || '%')
 #              order by sys_creation_date desc"""
+# query1 = """select sys_creation_date, activity_id, account, user_id, activity, dynamic_information,
+#             reason, remark, status from sla_pending_approval where user_id='admin'"""
 # all_request = db.session.execute(query).all()
 # print(all_request)
 
-pending_request = db.session.query(SlaPendingRequests).filter_by(
-            activity_id=12
-        ).first()
-print(pending_request)
+# sla_obj = db.session.query(SlaConfigDetails).filter_by(
+#                 account='maxico', application='app_1', sla_number="11",
+#                 deleted=False).first()
+# print(sla_obj.sla_number)
+
+application_list = db.session.query(SlaGlobalConfiguration.value).filter_by(account='maxico', type="account",
+                                                                         sub_type="applications").all()
+slas = db.session.query(SlaConfigDetails.sla_number).filter_by(account='maxico').all()
+sla_met = db.session.query(SlaDataModel.sla_number).filter_by(account="maxico", sla_met=True).all();
+sla_breached = db.session.query(SlaDataModel.sla_number).filter_by(account="maxico", sla_met=False).all();
+sla_data = db.session.query(SlaDataModel).filter_by(account="maxico").all();
+sla_owner = db.session.query(SlaUserManagement.user_name, SlaUserRole.account).outerjoin(SlaUserRole,
+                             SlaUserManagement.user_id==SlaUserRole.user_id).filter(
+    SlaUserRole.account=="maxico", SlaUserRole.role=="manager").all();
+applications=[value for (value,) in application_list]
+slas=[value for (value,) in slas]
+sla_met = [value for (value,) in sla_met]
+sla_breached = [value for (value,) in sla_breached]
+sla_owners = [{'user_name':value,'account':value1} for (value, value1) in sla_owner]
+payload = {'applications':applications,
+        'slas':slas,
+        'sla_met':sla_met,
+        'sla_breached':sla_breached,
+        'sla_data':sla_data,
+        'sla_owners': sla_owners
+        }
+print(home)
+print( [{'user_name':value,'account':value1} for (value, value1) in sla_owner])
+
 

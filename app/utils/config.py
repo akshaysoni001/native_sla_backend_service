@@ -1,37 +1,37 @@
 from sqlalchemy import and_
 from werkzeug.security import check_password_hash
 
-from app.models.models import SlaConfigParam, SlaConfigDetails, SlaDataModel, SlaUserManagement, SlaUserRole
+from app.models.models import SlaConfigDetails, SlaDataModel, SlaUserManagement, SlaUserRole, SlaGlobalConfiguration
 from app import db, session
 from dateutil.parser import parse
 from sqlalchemy import func
 from datetime import date
 
 
-class SlaConfigDetail(object):
+class GlobalConfiguration(object):
 
     def __init__(self):
         pass
 
-    def _get_sla_config(self):
-        all_account = db.session.query(SlaConfigParam.param_value).filter_by(
-            param_type="account", param_name="extension").all()
-        query_sender_email = db.session.query(SlaConfigParam.param_value).filter_by(
-            param_type="email", param_name="sender").first()
-        query_recipent_email = db.session.query(SlaConfigParam.param_value).filter_by(
-            param_type="email", param_name="recipent").first()
-        supported_domains = db.session.query(SlaConfigParam.param_value).filter_by(
-            param_type="email", param_account="all", param_name="domain").all()
+    def _get_global_config(self):
+        all_account = db.session.query(SlaGlobalConfiguration.value).filter_by(
+            type="account", sub_type="extension").all()
+        query_sender_email = db.session.query(SlaGlobalConfiguration.value).filter_by(
+            type="email", sub_type="sender").first()
+        query_recipient_email = db.session.query(SlaGlobalConfiguration.value).filter_by(
+            type="email", sub_type="recipient").first()
+        supported_domains = db.session.query(SlaGlobalConfiguration.value).filter_by(
+            type="email", account="all", sub_type="domain").all()
         config = {
             "all_account":  [value for (value,) in all_account],
-            "sender_email": query_sender_email.param_value,
-            "recipent_email": query_recipent_email.param_value,
+            "sender_email": query_sender_email.value,
+            "recipient_email": query_recipient_email.value,
             "supported_domains": [value for (value,) in supported_domains]
         }
         return config
 
     def get_config_details(self):
-        sla_config = self._get_sla_config()
+        sla_config = self._get_global_config()
         return sla_config
 
 
@@ -44,13 +44,13 @@ class GetSlaDetails:
 
     def _get_sla_details(self):
         if self.from_date and self.to_date and self.sla_number:
-            sla_details = db.session.query(SlaConfigDetails).filter_by(status=0, account=self.account,
+            sla_details = db.session.query(SlaConfigDetails).filter_by(account=self.account,
                                                                        sla_number=self.sla_number).filter(
                 and_(SlaConfigDetails.sys_creation_date <= parse(self.to_date), SlaConfigDetails.sys_creation_date
                      >= parse(self.from_date)), deleted=False).all()
         else:
-            sla_details = db.session.query(SlaConfigDetails).filter_by(status=0,
-                                                                       account=self.account, deleted=False).all()
+            sla_details = db.session.query(SlaConfigDetails).filter_by(
+                account=self.account, deleted=False).all()
         return sla_details
 
     def get_sla_details(self):

@@ -14,18 +14,17 @@ class JsonGenerator(Resource):
         self.json_dict = None
         self.message = None
         self.redirect = False
-        self.result = False
+        self.result = True
 
     def delete_sla(self):
         self.json_dict = {
             'user_id': self.user,
             'application': self.data["application"],
-            'account': self.account,
+            'account': self.data["account"],
             'sla_number': self.data["sla_number"],
             'sla_description': self.data["sla_description"],
             'sla_type': self.data["sla_type"],
-            'justification': self.data["remark"]
-
+            'reason': self.data["reason"]
         }
         self.request_type = "delete_sla"
 
@@ -33,21 +32,13 @@ class JsonGenerator(Resource):
         self.json_dict = {
             'user_id': self.user,
             'application': self.data["application"],
-            'account': self.account,
+            'account': self.data["account"],
             'sla_number': self.data["sla_number"],
             'sla_description': self.data["sla_description"],
-            'frequency': self.data["frequency"],
-            'level_type': self.data["level_type"],
             'sla_type': self.data["sla_type"],
             'target': self.data["target"],
-            'weightage': self.data["weightage"],
             'penalty': self.data["penalty"],
-            'circle_level_sla': self.data["circle_level_sla"],
-            'table_name': self.data["table_name"],
-            'sla_cal_condition': self.data["sla_cal_condition"],
-            'indicator': self.data["indicator"],
-            'status': self.data["status"],
-            'justification': self.data["remark"]
+            'reason': self.data["reason"]
         }
         if self.data["request"] == "add":
             self.request_type = "add_sla"
@@ -60,7 +51,7 @@ class JsonGenerator(Resource):
             "name": self.data["name"],
             "user_id": self.data["id"],
             "email_id": self.data["email"],
-            "justification": self.data["remark"]
+            "reason": self.data["remark"]
         }
         self.request_type = "registration"
 
@@ -68,8 +59,7 @@ class JsonGenerator(Resource):
         self.json_dict = {
             "request_for": self.data["service"],
             "service": self.data.get("account", "rights"),
-            "justification": self.data["remark"],
-            "check": self.data["check"]
+            "reason": self.data["reason"]
         }
         if self.json_dict["request_for"] == "add_account":
             self.request_type = "Add Account"
@@ -87,5 +77,5 @@ class JsonGenerator(Resource):
             self.registration()
         else:
             self.message = "Invalid Request"
-            return make_response(render_template('404.html', error=self.message))
+            self.result = True
         return self.json_dict, self.request_type

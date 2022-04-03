@@ -54,9 +54,9 @@ class RequestRaised:
             self.message = "Request is already present"
             return self.message
         else:
-            obj = SlaPendingRequests(account=self.user_account, user_id=self.user_id,
+            obj = SlaPendingRequests(account=self.new_data["account"], user_id=self.user_id,
                                      activity=self.activity, info=self.new_data,
-                                     justification=self.new_data["justification"])
+                                     reason=self.new_data["reason"])
 
             db.session.add(obj)
             db.session.commit()
